@@ -1,4 +1,8 @@
+import os
+import sys
 import torch
+from torch import nn
+import itertools
 
 def wait_for_user_input(msg=None):
     print("")
@@ -19,9 +23,6 @@ def sigmoid(x):
 
 def ReLU(x):
   return torch.maximum(torch.tensor(0), x) 
-
-import torch
-from torch import nn
 
 def test_train_loop(model: torch.nn.Module,
                     train_dataloader: torch.utils.data.DataLoader,
@@ -45,7 +46,10 @@ def test_train_loop(model: torch.nn.Module,
     Returns:
         dict: Dictionary containing final training loss, test loss, and test accuracy
     """
-    counter = epochs / 10
+    counter = epochs / 5
+    spinner = itertools.cycle(['|', '/', '-', '\\'])
+    sys.stdout.write(next(spinner) + " ")
+    sys.stdout.flush()
 
     for epoch in range(epochs):
         train_loss = 0
@@ -69,14 +73,18 @@ def test_train_loop(model: torch.nn.Module,
             
             test_loss /= len(test_dataloader)
             test_acc /= len(test_dataloader)
-        if( epoch > 0 and epoch % counter == 0 ):
+        if( (epoch > 0 and < 10) or (epoch % counter == 0) ):
+            line = next(spinner) + " " + "." * epoch
+            sys.stdout.write('\r' + line)
+            sys.stdout.flush()
             print(".", end="", flush=True)
-        if( epoch == counter or epoch == epochs - 1 ):
+        if( epoch % counter*2 == 0 ):
             print(f"\nEpoch {epoch} | Train loss: {train_loss:.5f} | Test loss: {test_loss:.5f}, Test acc: {test_acc:.2f}%\n")
-    
+    sys.stdout.write('\r' + ' ' * 30 + '\r') 
+    sys.stdout.flush()
+
     return {
         "train_loss": train_loss.item(),
         "test_loss": test_loss.item(),
         "test_acc": test_acc
     }
-

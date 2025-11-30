@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 import requests
 from pathlib import Path 
 
-EPOCHS = 1000
+EPOCHS = 50
 SAMPLES = 1000
 NOISE = 0.03
 RANDOM_SEED = 42
