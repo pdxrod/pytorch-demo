@@ -48,8 +48,6 @@ def test_train_loop(model: torch.nn.Module,
     """
     counter = epochs / 5
     spinner = itertools.cycle(['|', '/', '-', '\\'])
-    sys.stdout.write(next(spinner) + " ")
-    sys.stdout.flush()
 
     for epoch in range(epochs):
         train_loss = 0
@@ -70,16 +68,15 @@ def test_train_loop(model: torch.nn.Module,
                 test_pred = model(X)
                 test_loss += loss_fn(test_pred, y) 
                 test_acc += accuracy_fn(y_true=y, y_pred=test_pred.argmax(dim=1))
-            
             test_loss /= len(test_dataloader)
             test_acc /= len(test_dataloader)
-        if( (epoch > 0 and < 10) or (epoch % counter == 0) ):
-            line = next(spinner) + " " + "." * epoch
+        if( (epoch > 2 and epoch < 10) or (epoch % counter == 0) ):
+            line = next(spinner) + "." * epoch
             sys.stdout.write('\r' + line)
             sys.stdout.flush()
             print(".", end="", flush=True)
-        if( epoch % counter*2 == 0 ):
-            print(f"\nEpoch {epoch} | Train loss: {train_loss:.5f} | Test loss: {test_loss:.5f}, Test acc: {test_acc:.2f}%\n")
+            if( epoch % counter*3 == 0 ):
+                print(f"\nEpoch {epoch} | Train loss: {train_loss:.5f} | Test loss: {test_loss:.5f}, Test acc: {test_acc:.2f}%\n")
     sys.stdout.write('\r' + ' ' * 30 + '\r') 
     sys.stdout.flush()
 
