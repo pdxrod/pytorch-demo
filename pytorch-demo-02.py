@@ -1,3 +1,17 @@
+"""
+Get optimizer function
+for N epochs:
+    train step:
+      model.train()
+      get loss function
+      optimizer.zero_grad()
+      loss.backward()
+      optimizer.step()
+    test step:
+      model.eval()
+      test_loss = loss_fn(...)
+evaluate test loss            
+"""
 import torch
 from torch import nn
 import matplotlib.pyplot as plt
