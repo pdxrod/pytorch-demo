@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 import requests
 from pathlib import Path 
 
-EPOCHS = 50
+EPOCHS = 500
 SAMPLES = 1000
 NOISE = 0.03
 RANDOM_SEED = 42
@@ -70,7 +70,7 @@ flatten_model = nn.Flatten() # all nn modules function as a model (can do a forw
 x = train_features_batch[0]
 output = flatten_model(x) # perform forward pass
 
-my_utils.wait_for_user_input(f"Shape before flattening: {x.shape} -> [color_channels, height, width]")
+print(f"Shape before flattening: {x.shape} -> [color_channels, height, width]")
 my_utils.wait_for_user_input(f"Shape after flattening: {output.shape} -> [color_channels, height*width]")
 
 class ClothingModel(nn.Module):
@@ -84,8 +84,6 @@ class ClothingModel(nn.Module):
     
     def forward(self, x):
         return self.layer_stack(x)
-
-torch.manual_seed(RANDOM_SEED)
 
 model_0 = ClothingModel(input_shape=output.shape[1], # one for every pixel (28x28)
     hidden_units=10, 
@@ -105,3 +103,4 @@ results = my_utils.test_train_loop(
     accuracy_fn=accuracy_fn,
     epochs=EPOCHS
 )
+print(f"test train loop results: {results}")
