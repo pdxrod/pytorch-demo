@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 import requests
 from pathlib import Path 
 
-EPOCHS = 500
+EPOCHS = 50
 SAMPLES = 1000
 NOISE = 0.03
 RANDOM_SEED = 42
@@ -44,14 +44,6 @@ test_data = datasets.FashionMNIST(
     transform=ToTensor()
 )
 
-my_utils.wait_for_user_input("Show first two images\nImage shape: (colour channels, height, width)")
-for i in range(2):
-    image, label = train_data[i]
-    print(f"Image shape: {image.shape}")
-    plt.imshow(image.squeeze()) # image shape is [1, 28, 28] (colour channels, height, width)
-    plt.title(label)
-    plt.show()
-
 # Turn datasets into iterables (batches)
 train_dataloader = DataLoader(train_data, 
     batch_size=BATCH_SIZE, 
@@ -63,15 +55,17 @@ test_dataloader = DataLoader(test_data,
     shuffle=False 
 )
 
+my_utils.show_image_non_blocking(train_data[0][0], train_data[0][1])
+
 train_features_batch, train_labels_batch = next(iter(train_dataloader))
-my_utils.wait_for_user_input(f"Batch shapes: {train_features_batch.shape}, {train_labels_batch.shape}")
+print(f"Batch shapes: {train_features_batch.shape}, {train_labels_batch.shape}")
 
 flatten_model = nn.Flatten() # all nn modules function as a model (can do a forward pass)
 x = train_features_batch[0]
 output = flatten_model(x) # perform forward pass
 
 print(f"Shape before flattening: {x.shape} -> [color_channels, height, width]")
-my_utils.wait_for_user_input(f"Shape after flattening: {output.shape} -> [color_channels, height*width]")
+print(f"Shape after flattening: {output.shape} -> [color_channels, height*width]")
 
 class ClothingModel(nn.Module):
     def __init__(self, input_shape: int, hidden_units: int, output_shape: int):
@@ -104,3 +98,5 @@ results = my_utils.test_train_loop(
     epochs=EPOCHS
 )
 print(f"test train loop results: {results}")
+
+my_utils.show_image_non_blocking(train_data[1][0], train_data[1][1])
