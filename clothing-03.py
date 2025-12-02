@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 import requests
 from pathlib import Path 
 
-EPOCHS = 50
+EPOCHS = 900
 SAMPLES = 1000
 NOISE = 0.03
 RANDOM_SEED = 42
@@ -55,7 +55,7 @@ test_dataloader = DataLoader(test_data,
     shuffle=False 
 )
 
-my_utils.show_image_non_blocking(train_data[0][0], train_data[0][1])
+my_utils.show_image(train_data[0][0], train_data[0][1])
 
 train_features_batch, train_labels_batch = next(iter(train_dataloader))
 print(f"Batch shapes: {train_features_batch.shape}, {train_labels_batch.shape}")
@@ -87,7 +87,7 @@ model_0.to("cpu")
 loss_fn = nn.CrossEntropyLoss() 
 optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.1)
 
-my_utils.wait_for_user_input("Training model - hit Enter and wait...")
+print("Training model - wait...")
 results = my_utils.test_train_loop(
     model=model_0,
     train_dataloader=train_dataloader,
@@ -99,4 +99,4 @@ results = my_utils.test_train_loop(
 )
 print(f"test train loop results: {results}")
 
-my_utils.show_image_non_blocking(train_data[1][0], train_data[1][1])
+my_utils.show_image(train_data[1][0], train_data[1][1], block=True)
