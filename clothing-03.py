@@ -87,7 +87,7 @@ model_0.to("cpu")
 loss_fn = nn.CrossEntropyLoss() 
 optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.1)
 
-print("Training model - wait...")
+print(f"\nTraining model - wait... {EPOCHS} epochs")
 results = my_utils.test_train_loop(
     model=model_0,
     train_dataloader=train_dataloader,
