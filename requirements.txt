@@ -1,0 +1,29 @@
+# Core PyTorch packages
+torch==2.8.0
+torchvision==0.23.0
+torchaudio==2.8.0
+
+# Data science and visualization
+matplotlib==3.10.6
+matplotlib-inline==0.1.7
+numpy==2.2.6
+pandas==2.3.2
+
+# Image processing
+Pillow>=10.0.0
+
+# Machine learning utilities
+scikit-learn==1.7.2
+
+# Network requests
+requests==2.32.5
+
+# Jupyter/Notebook support
+ipykernel>=6.0.0
+
+# Optional but useful
+torchinfo==1.8.0
+torchexplorer==1.1.2
+
+# Progress bars
+tqdm>=4.65.0
