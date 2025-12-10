@@ -24,6 +24,7 @@ NOISE = 0.03
 RANDOM_SEED = 42
 TEST_SIZE = 0.2
 LEARNING_RATE = 0.1
+SNAPSHOT_EPOCHS = [0, 50, 200, 999]  # 4 snapshots → 8 images total (2 models x 4)
 
 class ClassifierModel1(nn.Module):
     def __init__(self):
@@ -129,17 +130,21 @@ n = 1
 #   loss & acc - How well the model performs on data it's learning from.
 #   test_loss & test_acc - How well the model generalizes to unseen data.
 
-# Store figures for each model
-model_figures = []
+# Store snapshots for each model (for end-of-run comparison grid)
+model_snapshots = []
 
-for model in models:
+# Capture snapshots during training to show boundary progression
+model_factories = [ClassifierModel1, ClassifierModel2]
+
+for model_idx, model in enumerate(models):
     print(f"model_{n}")
     optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
+    snapshots = []
     for epoch in range(EPOCHS):
         model.train()
         y_logits = model(X_train_gpu_or_mps)
         loss = loss_fn(y_logits.squeeze(), y_train_gpu_or_mps.squeeze())
-        y_pred = torch.round( torch.sigmoid(y_logits) ).squeeze()
+        y_pred = torch.round(torch.sigmoid(y_logits)).squeeze()
         acc = accuracy_fn(y_true=y_train_int, y_pred=y_pred)
         optimizer.zero_grad()
         loss.backward()
@@ -147,32 +152,56 @@ for model in models:
         model.eval()
         with torch.inference_mode():
             test_logits = model(X_test_gpu_or_mps)
-            test_pred = torch.round( torch.sigmoid(test_logits) ).squeeze()
+            test_pred = torch.round(torch.sigmoid(test_logits)).squeeze()
             test_loss = loss_fn(test_logits.squeeze(), y_test_gpu_or_mps.squeeze())
             test_acc = accuracy_fn(y_true=y_test_int, y_pred=test_pred)
             if (epoch < 100 and epoch % 20 == 0) or (epoch > 100 and epoch % 100 == 0):
                 print(f"Epoch {epoch:04d} | test_loss: {test_loss:.4f} |\
  test_acc: {test_acc:.2f}% | loss: {loss:.4f} | acc: {acc:.2f}%")
+
+            # Take snapshots at selected epochs to visualize later
+            if epoch in SNAPSHOT_EPOCHS or epoch == EPOCHS - 1:
+                snapshots.append({
+                    "epoch": epoch,
+                    "state_dict": deepcopy(model.state_dict()),
+                    "test_loss": float(test_loss.item()),
+                    "test_acc": float(test_acc)
+                })
     print(f"Final for model_{n}: Test loss: {test_loss:.4f} | Test acc: {test_acc:.2f}%")
-    
-    # Store model info for later plotting (don't create figure yet)
-    model_figures.append((n, test_loss, test_acc))
+    model_snapshots.append({
+        "model_num": n,
+        "snapshots": snapshots
+    })
     n += 1
 
 # Now display both models side by side for comparison
 my_utils.wait_for_user_input("Model Comparison: Model 1 vs Model 2. Model 2 uses a\
  mathematical function called 'ReLU' to improve its ability to find boundaries.")
 print("")
-fig, axes = plt.subplots(1, 2, figsize=(20, 8))
 
-for idx, (model_num, final_test_loss, final_test_acc) in enumerate(model_figures):
-    # Set title with performance metrics
-    axes[idx].set_title(f"Model {model_num} (Test Acc: {final_test_acc:.2f}%, Loss: {final_test_loss:.4f})", 
-                        fontsize=14, fontweight='bold')
-    
-    # Plot the decision boundary on the specified axes
-    model = models[model_num - 1]  # models is 0-indexed
-    plot_decision_boundary(model, X_test, y_test, ax=axes[idx])
+# Build a grid: rows = models, cols = snapshot epochs
+cols = len(SNAPSHOT_EPOCHS)
+fig, axes = plt.subplots(len(models), cols, figsize=(4 * cols, 4 * len(models)))
 
+for row_idx, model_info in enumerate(model_snapshots):
+    model_num = model_info["model_num"]
+    for col_idx, snap_epoch in enumerate(SNAPSHOT_EPOCHS):
+        ax = axes[row_idx, col_idx] if len(models) > 1 else axes[col_idx]
+        # Find the snapshot for this epoch (if missing, skip)
+        snap = next((s for s in model_info["snapshots"] if s["epoch"] == snap_epoch), None)
+        if snap is None:
+            ax.axis("off")
+            continue
+        # Recreate model at this snapshot
+        temp_model = model_factories[row_idx]().to("cpu")
+        temp_model.load_state_dict(snap["state_dict"])
+        plot_decision_boundary(temp_model, X_test, y_test, ax=ax)
+        ax.set_title(
+            f"Model {model_num} | epoch {snap_epoch}\n"
+            f"acc: {snap['test_acc']:.2f}%  loss: {snap['test_loss']:.4f}",
+            fontsize=10
+        )
+
+plt.suptitle("Decision Boundary Progression (rows = models, cols = epochs)", fontsize=14)
 plt.tight_layout()
 plt.show()
