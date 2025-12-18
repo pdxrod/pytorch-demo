@@ -28,15 +28,6 @@ cd /Users/rod/dev/ml/pytorch-demo
 source activate.sh
 ```
 
-## Running Notebooks
-
-After activating the virtual environment, make sure your notebook is using the correct kernel:
-
-1. Open your notebook in Cursor/Jupyter
-2. Select the kernel: **"Python (pytorch-demo)"**
-   - In Jupyter: Kernel → Change Kernel → Python (pytorch-demo)
-   - In VS Code/Cursor: Click the kernel selector in the top right, choose "Python (pytorch-demo)"
-
 ## Verifying Installation
 
 To verify everything is working:
