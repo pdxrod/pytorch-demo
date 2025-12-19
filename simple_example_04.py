@@ -64,8 +64,8 @@ test_data_custom = ImageFolderCustom(targ_dir=TEST_DIR,
 device = my_utils.get_device()
 
 for dirpath, dirnames, filenames in os.walk(DATA_PATH):
-  if re.match(r".+/pizza_steak_sushi/.+/.+", dirpath):
-    print(f"{len(filenames)} images in '{dirpath}'.")
+  if re.match( r".+/pizza_steak_sushi/.+/.+", dirpath):
+    print( f"{len(filenames)} images in '{dirpath}'.")
 
 # random.seed(42) # <- try changing this and see what happens
 image_path_list = list(IMAGE_PATH.glob("*/*/*.jpg"))
@@ -79,11 +79,17 @@ data_transform = transforms.Compose([
 my_utils.wait_for_user_input("Three random images from the food dataset. Press Enter to continue...")
 random_image_paths = random.sample(image_path_list, k=3)
 for image_path in random_image_paths:
-    with Image.open(image_path) as f:
-        fig, ax = plt.subplots(1, 2)
-        ax[0].imshow(f) 
-        ax[0].set_title(f"\nSize: {f.size}")
-        ax[0].axis("off")
-        fig.suptitle(f"Class: {image_path.parent.stem}", fontsize=16)
-        plt.show()
-        
+        with Image.open(image_path) as f:
+            fig, ax = plt.subplots(1, 2)
+            ax[0].imshow(f) 
+            ax[0].set_title(f"Original \nSize: {f.size}")
+            ax[0].axis("off")
+            transformed_image = data_transform(f).permute(1, 2, 0) 
+            ax[1].imshow(transformed_image) 
+            ax[1].set_title(f"Transformed \nSize: {transformed_image.shape}")
+            ax[1].axis("off")
+            fig.suptitle(f"Class: {image_path.parent.stem}", fontsize=16)
+            plt.show()
+
+class_dict = train_data_custom.class_to_idx
+class_dict        

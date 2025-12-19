@@ -6,14 +6,15 @@ import my_utils
 import torch
 from torch import nn
 import torchvision
-from torchvision import datasets
-from torchvision import transforms
+from torchvision import datasets, transforms
 from torchvision.transforms import ToTensor
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import make_moons
+from torch.utils.data import DataLoader, Dataset
 
+import itertools
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd

@@ -17,6 +17,8 @@ from pathlib import Path
 import requests
 from typing import List
 import torchvision
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, Dataset
 
 # Walk through an image classification directory and find out how many files (images)
 # are in each subdirectory.
@@ -126,7 +128,6 @@ def print_train_time(start, end, device=None):
     total_time = end - start
     print(f"\nTrain time on {device}: {total_time:.3f} seconds")
     return total_time
-
 
 # Plot loss curves of a model
 def plot_loss_curves(results):
@@ -288,7 +289,6 @@ def download_data(source: str,
     
     return image_path
 
-
 def wait_for_user_input(msg=None):
     print("")
     if msg is not None:
@@ -363,6 +363,7 @@ def test(model: torch.nn.Module,
         test_loss /= len(test_dataloader)
         test_acc /= len(test_dataloader)
     return test_loss, test_acc
+
 
 def test_train_loop(model: torch.nn.Module,
                     train_dataloader: torch.utils.data.DataLoader,
@@ -447,3 +448,59 @@ def get_pizza_steak_sushi_data():
             print("Unzipping pizza, steak, sushi data...") 
             zip_ref.extractall(image_path)
 
+NUM_WORKERS = os.cpu_count()
+
+def create_dataloaders(
+  train_dir: str,
+  test_dir: str,
+  transform: transforms.Compose,
+  batch_size: int,
+  num_workers: int=NUM_WORKERS  
+):
+  """Creates training and testing DataLoaders.
+
+  Takes in a training directory and testing directroy path and turns them into 
+  PyTorch Datasets and then into PyTorch DataLoaders.
+
+  Args:
+    train_dir: Path to training directory.
+    test_dir: Path to testing directory.
+    transform: torchvision transforms to perform on training and testing data.
+    batch_size: Number of samples per batch in each of the DataLoaders.
+    num_workers: An integer for number of workers per DataLoader.
+
+  Returns:
+    A tuple of (train_dataloader, test_dataloader, class_names).
+    Where class_names is a list of the target classes.
+    Example usage:
+      train_dataloader, test_dataloader, class_names = create_dataloaders(train_dir=path/to/train_dir,
+        test_dir=path/to/test_dir,
+        transform=some_transform,
+        batch_size=32,
+        num_workers=4)
+  """
+  # Use ImageFolder to create datasets(s)
+  train_data = datasets.ImageFolder(train_dir, transform=transform)
+  test_data = datasets.ImageFolder(test_dir, transform=transform)
+
+  # Get class names
+  class_names = train_data.classes
+
+  # Turn images into DataLoaders
+  train_dataloader = DataLoader(
+      train_data,
+      batch_size=batch_size,
+      shuffle=True,
+      num_workers=num_workers,
+      pin_memory=True # for more on pin memory, see the PyTorch docs: https://pytorch.org/docs/stable/data.html 
+  )
+
+  test_dataloader = DataLoader(
+      test_data,
+      batch_size=batch_size,
+      shuffle=False,
+      num_workers=num_workers,
+      pin_memory=True
+  )
+
+  return train_dataloader, test_dataloader, class_names
