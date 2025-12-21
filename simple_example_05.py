@@ -77,13 +77,13 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     accuracy_fn = my_utils.accuracy_fn
 
-    test_train_loop(model=model, 
-                    train_dataloader=train_dataloader, 
-                    test_dataloader=test_dataloader, 
-                    loss_fn=loss_fn, 
-                    optimizer=optimizer, 
-                    accuracy_fn=accuracy_fn, 
-                    epochs=10)
+test_train_loop(model=model, 
+                train_dataloader=train_dataloader, 
+                test_dataloader=test_dataloader, 
+                loss_fn=loss_fn, 
+                optimizer=optimizer, 
+                accuracy_fn=accuracy_fn, 
+                epochs=10)
 
 
 
