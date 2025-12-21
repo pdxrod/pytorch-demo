@@ -1,62 +1,166 @@
-# pytorch-demo
+# PyTorch Demo
 
-An attempt to take the lessons in pytorch-deep-learning https://github.com/mrdbourke/pytorch-deep-learning, and create python programs which show the lessons with the miniumum amound of code. 
+A collection of simplified PyTorch programs demonstrating core deep learning concepts with minimal code. These examples are inspired by the [pytorch-deep-learning](https://github.com/mrdbourke/pytorch-deep-learning) course and showcase the fundamental principles that power modern AI systems.
 
-Real LLMs are a massively larger version of this code. The basic steps - generating data, splitting into train and test data, 'backpropagation', where the software changes numbers in neurons until the model answers a question correctly, are the same. A big LLM like ChatGPT does the same millions of times, with half of the internet and millions of books, papers, images and clips, until it is giving the right answer over 99% of the time to a vast range of questions it has never seen before - then it's considered trained. These programs are highly simplified version of this process - simple data, only three layers of neurons - but the principle is the same. 
+## About This Project
 
-##
+This project takes lessons from the PyTorch Deep Learning course and creates simplified Python programs that demonstrate core concepts with the minimum amount of code necessary. The examples cover:
 
-# Project Setup Instructions
+- **Data generation and preprocessing**
+- **Train/test data splitting**
+- **Neural network architecture**
+- **Training with backpropagation**
+- **Model evaluation and testing**
 
-This project uses a Python virtual environment to ensure consistent package versions.
+These programs are highly simplified versions of what powers large language models (LLMs) like ChatGPT. While real LLMs use millions of parameters and train on vast datasets, these examples use simple data and minimal neural network layers to illustrate the same fundamental principles: generating data, training models through backpropagation, and optimizing until the model answers questions correctly.
 
 ## Quick Start
 
-### Option 1: Activate the virtual environment manually
+### Initial Setup
+
+Run the setup script to create a virtual environment and install all dependencies:
+
+```bash
+./setup.sh
+```
+
+This script will:
+- Check for Python 3
+- Create a virtual environment (`venv/`)
+- Install all required packages from `requirements.txt`
+- Verify the installation
+
+Once setup completes, you'll see a message confirming you can run the Python programs.
+
+### Running Programs
+
+After setup, activate the virtual environment and run any of the example programs:
+
+```bash
+# Activate the virtual environment
+source venv/bin/activate
+
+# Run an example program
+python simple_example_00.py
+python simple_example_01.py
+python simple_example_05.py
+# etc.
+```
+
+### Activating the Virtual Environment (For Future Sessions)
+
+You only need to run `./setup.sh` once (or when you need to reinstall packages). For future terminal sessions, just activate the virtual environment:
+
 ```bash
 source venv/bin/activate
 ```
 
-### Option 2: Use the activation script
+Or use the activation script:
+
 ```bash
 source activate.sh
 ```
 
-### Option 3: Use the activation script (from anywhere)
-```bash
-cd /Users/rod/dev/ml/pytorch-demo
-source activate.sh
+## Project Structure
+
 ```
+pytorch-demo/
+├── setup.sh              # One-time setup script (creates venv, installs packages)
+├── activate.sh           # Helper script to activate virtual environment
+├── requirements.txt      # Python package dependencies
+├── imports.py            # Common imports module
+├── my_utils.py           # Utility functions for training and data handling
+├── simple_example_*.py   # Example programs demonstrating PyTorch concepts
+├── moons_classification_02.py  # Moons dataset classification example
+├── clothing-900-parameters-03.py  # Clothing classification with 900 parameters
+└── data/                 # Training data (FashionMNIST, pizza/steak/sushi images)
+```
+
+## Example Programs
+
+- **simple_example_00.py** - Basic PyTorch fundamentals
+- **simple_example_01.py** - PyTorch workflow example
+- **simple_example_02.py** - Classification example
+- **simple_example_03.py** - Computer vision example
+- **simple_example_04.py** - Custom datasets example
+- **simple_example_05.py** - Image classification with TinyVGG architecture
+- **moons_classification_02.py** - Classification on synthetic moons dataset
+- **clothing-900-parameters-03.py** - Clothing classification model
+
+## Dependencies
+
+The project requires Python 3.8+ and the following key packages:
+
+- **PyTorch** (torch, torchvision, torchaudio) - Deep learning framework
+- **NumPy** - Numerical computing
+- **Matplotlib** - Data visualization
+- **Pandas** - Data manipulation
+- **scikit-learn** - Machine learning utilities
+- **Pillow** - Image processing
+- **tqdm** - Progress bars
+
+See `requirements.txt` for the complete list with version specifications.
 
 ## Verifying Installation
 
-To verify everything is working:
+After running `./setup.sh`, verify everything is working:
+
 ```bash
 source venv/bin/activate
-python -c "import matplotlib; print('✅ matplotlib works!')"
-python -c "import torch; print('✅ PyTorch works!')"
+python -c "import torch; print('✅ PyTorch:', torch.__version__)"
+python -c "import matplotlib; print('✅ Matplotlib works!')"
+python -c "import numpy; print('✅ NumPy works!')"
 ```
-
-## Reinstalling Dependencies
-
-If you need to reinstall packages:
-```bash
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-## Making it Persistent
-
-The virtual environment is already in your project directory, so it will persist across restarts. Just make sure to:
-
-1. Activate the virtual environment before running notebooks or scripts
-2. Select the correct kernel in your notebook interface
-3. The environment will persist because it's stored in the `venv/` directory
 
 ## Troubleshooting
 
-If matplotlib or other packages can't be found:
-1. Make sure the virtual environment is activated: `source venv/bin/activate`
-2. Check you're using the right kernel in your notebook
+### Virtual Environment Issues
+
+If you encounter issues with the virtual environment:
+
+1. **Broken or incomplete venv**: Run `./setup.sh` again. It will detect and recreate a broken virtual environment.
+
+2. **Packages not found**: Make sure the virtual environment is activated:
+   ```bash
+   source venv/bin/activate
+   ```
+   You should see `(venv)` in your terminal prompt.
+
+### Reinstalling Dependencies
+
+To reinstall all packages:
+
+```bash
+source venv/bin/activate
+pip install -r requirements.txt --upgrade
+```
+
+Or simply run `./setup.sh` again (it's safe to run multiple times).
+
+### Multiprocessing Issues on macOS
+
+If you see errors about multiprocessing when running programs with `num_workers > 0` in DataLoader:
+
+- Make sure your Python scripts use `if __name__ == '__main__':` to protect the main execution code
+- Alternatively, set `num_workers=0` in DataLoader creation (slower but avoids multiprocessing issues)
+
+### Package Import Errors
+
+If Python can't find packages even after activation:
+
+1. Verify the virtual environment is activated: `which python` should point to `venv/bin/python`
+2. Check package installation: `pip list | grep torch`
 3. Reinstall packages: `pip install -r requirements.txt`
 
+## Notes
+
+- The virtual environment (`venv/`) is stored in the project directory and persists across restarts
+- Always activate the virtual environment before running scripts or working with notebooks
+- The setup script is idempotent - you can run it multiple times safely
+- On macOS, PyTorch will use MPS (Metal Performance Shaders) if available for GPU acceleration
+
+## Additional Resources
+
+- [PyTorch Documentation](https://pytorch.org/docs/)
+- [PyTorch Deep Learning Course](https://github.com/mrdbourke/pytorch-deep-learning)
+- [PyTorch Tutorials](https://pytorch.org/tutorials/)
