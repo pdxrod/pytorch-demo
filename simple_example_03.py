@@ -135,7 +135,7 @@ print(f"  Classes: {train_data.classes}\n")
 
 # Find and display one example of each category
 found_labels = set()
-for i in range(len(train_data)):
+for i in range(3):
     image, label = train_data[i]  # Unpack tuple: image shape [1, 28, 28], label is int
     if label not in found_labels:
         class_name = train_data.classes[label]  # Get class name from label

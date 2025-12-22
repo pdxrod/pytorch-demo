@@ -55,7 +55,8 @@ class TinyVGG(nn.Module):
       return x
       # return self.classifier(self.block_2(self.block_1(x))) # <- leverage the benefits of operator fusion
 
-if __name__ == '__main__':
+
+def main():
     DATA_PATH = Path("data/")
     IMAGE_PATH = DATA_PATH / "pizza_steak_sushi"
     TRAIN_DIR = IMAGE_PATH / "train"
@@ -77,15 +78,15 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     accuracy_fn = my_utils.accuracy_fn
 
-test_train_loop(model=model, 
-                train_dataloader=train_dataloader, 
-                test_dataloader=test_dataloader, 
-                loss_fn=loss_fn, 
-                optimizer=optimizer, 
-                accuracy_fn=accuracy_fn, 
-                epochs=10)
+    test_train_loop(model=model, 
+                    train_dataloader=train_dataloader, 
+                    test_dataloader=test_dataloader, 
+                    loss_fn=loss_fn, 
+                    optimizer=optimizer, 
+                    accuracy_fn=accuracy_fn, 
+                    epochs=10)
 
-
-
+if __name__ == '__main__':
+    main()
 
 

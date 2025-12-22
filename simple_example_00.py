@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+print( """This is a simple example of a PyTorch model. 
+It creates a model with 3 inputs and 4 neurons in the first 
+layer and 4 inputs and 2 neurons in the second layer.
+It then creates an optimizer and a forward pass.
+It then computes the loss and performs a backward pass.
+Then it updates the parameters.
+""" )
+input( f"Press Enter to continue..." )  
+
 import torch
 from torch import nn
 

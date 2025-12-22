@@ -4,9 +4,9 @@ import torch
 from torch import nn # nn contains all of PyTorch's building blocks for neural networks
 import matplotlib.pyplot as plt
 import sys
-sys.path.append("..")
 import my_utils 
 
+epochs = 300
 weight = 0.3
 bias = 0.9
 start = 0
@@ -14,8 +14,17 @@ end = 1
 step = 0.02
 X = torch.arange(start, end, step).unsqueeze(dim=1)
 y = weight * X + bias
-print( "X[:10], y[:10]: ", X[:10], y[:10] ) 
-my_utils.wait_for_user_input()
+ 
+my_utils.wait_for_user_input(
+  """
+  This simple PyTorch AI/ML model illustrates the addition of the 'extra' functions 
+          optimizer.zero_grad()
+          loss.backward()
+          optimizer.step()
+  to each training step.         
+  The positive effect of this is shown in graphs of the training and testing loss curves. 
+  """
+)
  
 train_split = int(0.8 * len(X))
 X_train, y_train = X[:train_split], y[:train_split]
@@ -34,13 +43,9 @@ class MyFirstModel(nn.Module):
         return self.weights * x + self.bias 
 
 def train_step(model: torch.nn.Module, use_extra_functions: bool,
-               loss_fn: torch.nn.Module, optimizer: torch.optim.Optimizer):
-    print( "train_step() - use_extra_functions?: ", use_extra_functions )
-    my_utils.wait_for_user_input()
-                  
+               loss_fn: torch.nn.Module, optimizer: torch.optim.Optimizer):                  
     train_loss_values = []
     test_loss_values = []
-    epochs = 300
     for epoch in range(epochs):
         model_0.train()
         y_pred = model_0(X_train)
@@ -63,46 +68,29 @@ def train_step(model: torch.nn.Module, use_extra_functions: bool,
                 print(f"Epoch: {epoch} | Test Loss: {test_loss}")
     return train_loss_values, test_loss_values
 
-model_0 = MyFirstModel()
-loss_fn = nn.L1Loss() 
-optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.01)   
-test_loss_values = []
-train_loss_values, test_loss_values = train_step( model_0, use_extra_functions=False, 
-            loss_fn=loss_fn, optimizer=optimizer)
+extra_functions = [False, True]
+for use_extra_functions in extra_functions:
+    model_0 = MyFirstModel()
+    loss_fn = nn.L1Loss() 
+    optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.01)                 
+    train_loss_values, test_loss_values = train_step( 
+        model_0, 
+        use_extra_functions=use_extra_functions, 
+        loss_fn=loss_fn, 
+        optimizer=optimizer)
 
-model_0 = MyFirstModel()
-loss_fn = nn.L1Loss() 
-optimizer = torch.optim.SGD(params=model_0.parameters(), lr=0.01)                 
-train_loss_values = []
-test_loss_values = []
-train_loss_values, test_loss_values = train_step( model_0, use_extra_functions=True, 
-            loss_fn=loss_fn, optimizer=optimizer)
+    test_epochs = list(range(len(test_loss_values)))
+    train_epochs = list(range(len(train_loss_values)))
 
-test_epochs = list(range(len(test_loss_values)))
-train_epochs = list(range(len(train_loss_values)))
+    msg = "with 'extra' functions" if use_extra_functions else "without 'extra' functions"
+    print("After running train_step() ", msg)
+    my_utils.wait_for_user_input()
 
-plt.figure(figsize=(9, 6))
-plt.title("Training and Testing Loss Curves")
-plt.xlabel("Epochs")
-plt.ylabel("Loss")
-
-print("After running train_step() with optimizer and loss functions")
-print("X_train length: ", len(X_train))
-print("train_loss_values length: ", len(train_loss_values))
-my_utils.wait_for_user_input()
-
-plt.scatter(train_epochs, train_loss_values, c="b", s=4, label="Training loss")
-plt.scatter(test_epochs, test_loss_values, c="g", s=4, label="Testing loss")
-plt.legend()
-plt.show()
-
-print("Saving to file")
-old_state_dict = model_0.state_dict()
-torch.save(obj=model_0.state_dict(), f="01_workflow_model_0.pth") 
-print("Loading from file")
-loaded_model_0 = MyFirstModel()
-loaded_model_0.load_state_dict(torch.load(f="01_workflow_model_0.pth"))
-new_state_dict = loaded_model_0.state_dict()
-print("Saved state dict: ", old_state_dict)
-print("Loaded state dict: ", new_state_dict)
-print("Loaded state dict == saved state dict?: ", new_state_dict == old_state_dict)
+    plt.figure(figsize=(9, 6))
+    plt.title("Training and Testing Loss Curves")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.scatter(train_epochs, train_loss_values, c="b", s=4, label="Training loss")
+    plt.scatter(test_epochs, test_loss_values, c="g", s=4, label="Testing loss")
+    plt.legend()
+    plt.show()
