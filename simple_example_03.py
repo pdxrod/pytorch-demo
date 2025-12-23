@@ -12,7 +12,14 @@ BATCH_SIZE = 32
 
 torch.manual_seed(RANDOM_SEED)
 
-my_utils.wait_for_user_input("Grainy pictures of clothing from the Fashion MNIST dataset" )
+my_utils.pretty_print("""An important example from AI history.
+Grainy pictures of clothing from the Fashion MNIST dataset.
+The Fashion MNIST dataset contains 70,000 images of 10 different categories of clothing.
+Each image is a 28x28 grayscale image.
+The dataset is split into 60,000 training images and 10,000 test images.
+The images are labeled with the category of clothing they represent.
+The dataset is used to train and test a clothing model.
+""")
 train_data = datasets.FashionMNIST(
     root="data", 
     train=True, # get training data
@@ -77,14 +84,9 @@ plt.tight_layout()
 plt.show(block=True)
 
 train_features_batch, train_labels_batch = next(iter(train_dataloader))
-print(f"Batch shapes: {train_features_batch.shape}, {train_labels_batch.shape}")
-
 flatten_model = nn.Flatten() # all nn modules function as a model (can do a forward pass)
 x = train_features_batch[0]
 output = flatten_model(x) # perform forward pass
-
-print(f"Shape before flattening: {x.shape} -> [color_channels, height, width]")
-print(f"Shape after flattening: {output.shape} -> [color_channels, height*width]")
 
 class ClothingModel(nn.Module):
     def __init__(self, input_shape: int, hidden_units: int, output_shape: int):
@@ -126,8 +128,6 @@ print(f"test train loop results: {results}")
 # To get the number of samples, use len(train_data), not len(train_data[0])
 
 # Show one example from each category at the end (10 images total)
-print(f"\n{'='*60}")
-print(f"{'='*60}")
 print(f"Dataset info:")
 print(f"  Number of samples: {len(train_data)}")
 print(f"  Image dimensions: [channels, height, width] = [1, 28, 28]")
@@ -135,13 +135,13 @@ print(f"  Classes: {train_data.classes}\n")
 
 # Find and display one example of each category
 found_labels = set()
-for i in range(3):
-    image, label = train_data[i]  # Unpack tuple: image shape [1, 28, 28], label is int
+for i in range( len(train_data) ):
+    break; # Delete this line if you want to see all the pictures of clothing in colour
+    image, label = train_data[i]  
     if label not in found_labels:
-        class_name = train_data.classes[label]  # Get class name from label
+        class_name = train_data.classes[label]  
         my_utils.show_image(image, f"Class {label}: {class_name}", block=True)
         found_labels.add(label)
         if len(found_labels) == len(train_data.classes):
             break
 
-print(f"{'='*60}")

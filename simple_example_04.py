@@ -54,8 +54,16 @@ test_transforms = transforms.Compose([
     transforms.ToTensor()
 ])
 
-my_utils.get_pizza_steak_sushi_data()
+print("")
+my_utils.pretty_print("""
+This program summarizes the notebooks from 04_pytorch_custom_datasets.ipynb onwards.
+It reads a collection of images of pizza, sushi, and steak, and tries to classify them.
+The program uses a subset of the full PyTorch food dataset.
+To use the full dataset, download it by uncommenting this line: my_utils.get_pizza_steak_sushi_data().
+""")
+# my_utils.get_pizza_steak_sushi_data()
 
+print("")
 train_data_custom = ImageFolderCustom(targ_dir=TRAIN_DIR, 
                                       transform=train_transforms)
 test_data_custom = ImageFolderCustom(targ_dir=TEST_DIR, 
@@ -76,20 +84,14 @@ data_transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
-my_utils.wait_for_user_input("Three random images from the food dataset. Press Enter to continue...")
+print("\nA random image from the food dataset...")
 random_image_paths = random.sample(image_path_list, k=3)
 for image_path in random_image_paths:
-        with Image.open(image_path) as f:
-            fig, ax = plt.subplots(1, 2)
-            ax[0].imshow(f) 
-            ax[0].set_title(f"Original \nSize: {f.size}")
-            ax[0].axis("off")
-            transformed_image = data_transform(f).permute(1, 2, 0) 
-            ax[1].imshow(transformed_image) 
-            ax[1].set_title(f"Transformed \nSize: {transformed_image.shape}")
-            ax[1].axis("off")
-            fig.suptitle(f"Class: {image_path.parent.stem}", fontsize=16)
-            plt.show()
-
-class_dict = train_data_custom.class_to_idx
-class_dict        
+    with Image.open(image_path) as f:
+        fig, ax = plt.subplots(1, 1)
+        ax.imshow(f) 
+        ax.set_title(f"\nSize: {f.size}")
+        ax.axis("off")
+        fig.suptitle(f"Class: {image_path.parent.stem}", fontsize=16)
+        plt.show()
+        break;

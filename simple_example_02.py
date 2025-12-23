@@ -16,6 +16,7 @@ evaluate test loss
 """
 
 from imports import *
+import my_utils
 
 DEVICE = my_utils.get_device()
 EPOCHS = 1000
@@ -25,6 +26,27 @@ RANDOM_SEED = 42
 TEST_SIZE = 0.2
 LEARNING_RATE = 0.1
 SNAPSHOT_EPOCHS = [0, 50, 200, 999]  # 4 snapshots → 8 images total (2 models x 4)
+
+my_utils.pretty_print("""
+This example has two PyTorch models.
+The program illustrates the use of an optimizer and a loss function to 
+improve the ability of models to find boundaries.
+It generates two half-moon shaped objects on a two-dimensional 
+plane. These objects overlap, so it is impossible to draw a 
+straight line between them which does not bump into either of the half-moons.
+The first model is only able to draw straight lines.
+""")
+print(""" 
+The second model, with the addition of a function called 'ReLU', 
+    self.layer1 = nn.Linear(in_features=2, out_features=10)
+    self.relu1 = nn.ReLU()  
+in the second model's constructor, and
+    x = self.relu1(x)
+in its forward() function, is able to work out how to draw a 
+curved line which does not hit either object.   """)
+my_utils.wait_for_user_input("""The difference between the two models is illustrated, first by showing the numbers in
+their attempts to reduce 'loss', then by a series of images showing the results.   
+""")
 
 class ClassifierModel1(nn.Module):
     def __init__(self):
@@ -40,16 +62,16 @@ class ClassifierModel2(nn.Module):
     def __init__(self):
         super().__init__()
         self.layer1 = nn.Linear(in_features=2, out_features=10)
-        self.relu1 = nn.ReLU()  # ← Add this!
+        self.relu1 = nn.ReLU()  
         self.layer2 = nn.Linear(in_features=10, out_features=10)
-        self.relu2 = nn.ReLU()  # ← Add this!
+        self.relu2 = nn.ReLU() 
         self.layer3 = nn.Linear(in_features=10, out_features=1)
 
     def forward(self, x):
         x = self.layer1(x)
-        x = self.relu1(x)      # ← Add this!
+        x = self.relu1(x)      
         x = self.layer2(x)
-        x = self.relu2(x)      # ← Add this!
+        x = self.relu2(x)      
         x = self.layer3(x)
         return x        
 
@@ -95,9 +117,6 @@ def accuracy_fn(y_true, y_pred):
 model_1 = ClassifierModel1().to(DEVICE)
 model_2 = ClassifierModel2().to(DEVICE)
 models = [model_1, model_2]
-print("ClassifierModels 1 and 2")
-print(model_1)
-print(model_2)
 
 # Get X and y for 'moons' data 
 # X = input features (coordinates of each point)
@@ -116,10 +135,8 @@ y_train_float = y_train_gpu_or_mps.float()
 y_train_int = y_train_gpu_or_mps.long()
 y_test_float = y_test_gpu_or_mps.float()
 y_test_int = y_test_gpu_or_mps.long()
-print(f"\nX_train: {X_train_gpu_or_mps.squeeze()[:5]} \nX_test: {X_test_gpu_or_mps.squeeze()[:5]} \
-      \ny_train: {y_train_gpu_or_mps.squeeze()[:5]} \ny_test: {y_test_gpu_or_mps.squeeze()[:5]} ")
 
-my_utils.wait_for_user_input("Training loop")
+print("Training loop")
 n = 1
 # 1. Forward pass:     X_train → model → y_logits (predictions)
 # 2. Calculate loss:   Compare y_logits to y_train → loss (how wrong?)
@@ -137,6 +154,7 @@ model_snapshots = []
 model_factories = [ClassifierModel1, ClassifierModel2]
 
 for model_idx, model in enumerate(models):
+    print("")
     print(f"model_{n}")
     optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
     snapshots = []
@@ -175,9 +193,8 @@ for model_idx, model in enumerate(models):
     n += 1
 
 # Now display both models side by side for comparison
-my_utils.wait_for_user_input("Model Comparison: Model 1 vs Model 2. Model 2 uses a\
- mathematical function called 'ReLU' to improve its ability to find boundaries.")
 print("")
+print("Diagrams")
 
 # Build a grid: rows = models, cols = snapshot epochs
 cols = len(SNAPSHOT_EPOCHS)
@@ -202,6 +219,6 @@ for row_idx, model_info in enumerate(model_snapshots):
             fontsize=10
         )
 
-plt.suptitle("Decision Boundary Progression (rows = models, cols = epochs)", fontsize=14)
+plt.suptitle("Decision Boundary Progression", fontsize=14)
 plt.tight_layout()
 plt.show()

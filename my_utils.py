@@ -10,8 +10,6 @@ import itertools
 from torch import nn
 import os
 import sys
-sys.path.append("..")
-sys.path.append(".")
 import zipfile
 from pathlib import Path
 import requests
@@ -19,6 +17,8 @@ from typing import List
 import torchvision
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Dataset
+import textwrap
+import shutil
 
 # Walk through an image classification directory and find out how many files (images)
 # are in each subdirectory.
@@ -504,3 +504,7 @@ def create_dataloaders(
   )
 
   return train_dataloader, test_dataloader, class_names
+
+def pretty_print( txt: str ):
+    columns, lines = shutil.get_terminal_size()
+    print(textwrap.fill(txt, width=columns))
