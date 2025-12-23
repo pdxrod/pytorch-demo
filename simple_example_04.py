@@ -7,40 +7,25 @@ IMAGE_PATH = DATA_PATH / "pizza_steak_sushi"
 TRAIN_DIR = IMAGE_PATH / "train"
 TEST_DIR = IMAGE_PATH / "test"
 
+def intro():
+    print("")
+    my_utils.pretty_print("""
+This program is intended to summarize the notebooks from pytorch-deep-learning/ 04_pytorch_custom_datasets.ipynb onwards.
+It reads a collection of images of pizza, sushi, and steak, and tries to classify them.
+It recreates class TinyVGG, a small-scale version of a convolutional neural network.
+See https://poloclub.github.io/cnn-explainer/.
+The program uses a subset of the full PyTorch food dataset.
+To use the full dataset, download it by uncommenting this line: my_utils.get_pizza_steak_sushi_data().
+    """)
+    # my_utils.get_pizza_steak_sushi_data()
+    print("")
+
 def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
     classes = sorted(entry.name for entry in os.scandir(directory) if entry.is_dir())
     if not classes:
         raise FileNotFoundError(f"Couldn't find any classes in {directory}.")
     class_to_idx = {cls_name: i for i, cls_name in enumerate(classes)}
     return classes, class_to_idx
-
-class ImageFolderCustom(Dataset):
-    
-    def __init__(self, targ_dir: str, transform=None) -> None:
-        
-        self.paths = list(pathlib.Path(targ_dir).glob("*/*.jpg")) 
-        self.transform = transform
-        self.classes, self.class_to_idx = find_classes(targ_dir)
-
-    def load_image(self, index: int) -> Image.Image:
-        "Opens an image via a path and returns it."
-        image_path = self.paths[index]
-        return Image.open(image_path) 
-    
-    def __len__(self) -> int:
-        "Returns the total number of samples."
-        return len(self.paths)
-    
-    def __getitem__(self, index: int) -> Tuple[torch.Tensor, int]:
-        "Returns one sample of data, data and label (X, y)."
-        img = self.load_image(index)
-        class_name  = self.paths[index].parent.name 
-        class_idx = self.class_to_idx[class_name]
-
-        if self.transform:
-            return self.transform(img), class_idx 
-        else:
-            return img, class_idx 
 
 class TinyVGG(nn.Module):
   """Creates the TinyVGG architecture.
@@ -91,74 +76,37 @@ class TinyVGG(nn.Module):
       return x
 
 def main():
+    intro()
 
-    print("")
-    my_utils.pretty_print("""
-    This program summarizes the notebooks from 04_pytorch_custom_datasets.ipynb onwards.
-It reads a collection of images of pizza, sushi, and steak, and tries to classify them.
-The program uses a subset of the full PyTorch food dataset.
-To use the full dataset, download it by uncommenting this line: my_utils.get_pizza_steak_sushi_data().
-    """)
-    # my_utils.get_pizza_steak_sushi_data()
-    print("")
-
-    data_transform = transforms.Compose([ 
-        transforms.Resize((64, 64)),
-        transforms.ToTensor(),
-    ])
-
-    train_transforms = transforms.Compose([
-        transforms.Resize((64, 64)),
-        transforms.RandomHorizontalFlip(p=0.5),
-        transforms.ToTensor()
-    ])
-
-    test_transforms = transforms.Compose([
-        transforms.Resize((64, 64)),
-        transforms.ToTensor()
-    ])
-
-    train_dataloader, test_dataloader, class_names = my_utils.create_dataloaders(train_dir=TRAIN_DIR, 
-                                                                                 test_dir=TEST_DIR, 
-                                                                                 transform=data_transform,
-                                                                                 batch_size=32, 
-                                                                                 num_workers=4)
+    data_transform = transforms.Compose([ transforms.Resize((64, 64)), transforms.ToTensor(), ])
+    train_dataloader, test_dataloader, class_names = my_utils.create_dataloaders( train_dir=TRAIN_DIR, 
+                                                                                  test_dir=TEST_DIR, 
+                                                                                  transform=data_transform,
+                                                                                  batch_size=32, 
+                                                                                  num_workers=4 )
 
     model = TinyVGG(input_shape=3, hidden_units=10, output_shape=len(class_names))
     loss_fn = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    accuracy_fn = my_utils.accuracy_fn
+
+    for dirpath, dirnames, filenames in os.walk(DATA_PATH):
+        if re.match( r".+/pizza_steak_sushi/.+/.+", dirpath):
+            print( f"{len(filenames)} images in '{dirpath}'.")
 
     my_utils.test_train_loop( model=model, 
                               train_dataloader=train_dataloader, 
                               test_dataloader=test_dataloader, 
                               loss_fn=loss_fn, 
                               optimizer=optimizer, 
-                              accuracy_fn=my_utils.accuracy_fn, 
+                              accuracy_fn=accuracy_fn, 
                               epochs=10 )
-
     print("")
 
-    train_data_custom = ImageFolderCustom(targ_dir=TRAIN_DIR, 
-                                        transform=train_transforms)
-    test_data_custom = ImageFolderCustom(targ_dir=TEST_DIR, 
-                                        transform=test_transforms)
-
-    device = my_utils.get_device()
-
-    for dirpath, dirnames, filenames in os.walk(DATA_PATH):
-        if re.match( r".+/pizza_steak_sushi/.+/.+", dirpath):
-            print( f"{len(filenames)} images in '{dirpath}'.")
-
     image_path_list = list(IMAGE_PATH.glob("*/*/*.jpg"))
-
-    data_transform = transforms.Compose([
-        transforms.Resize(size=(64, 64)),
-        transforms.RandomHorizontalFlip(p=0.5), 
-        transforms.ToTensor()
-    ])
+    random_image_paths = random.sample(image_path_list, k=3 )
 
     print("\nA random image from the food dataset...")
-    random_image_paths = random.sample(image_path_list, k=3)
     for image_path in random_image_paths:
         with Image.open(image_path) as f:
             fig, ax = plt.subplots(1, 1)
@@ -167,9 +115,7 @@ To use the full dataset, download it by uncommenting this line: my_utils.get_piz
             ax.axis("off")
             fig.suptitle(f"Class: {image_path.parent.stem}", fontsize=16)
             plt.show()
-            break;
+            break
 
 if __name__ == '__main__':
     main()
-
-
