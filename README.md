@@ -40,11 +40,13 @@ After setup, activate the virtual environment and run any of the example program
 # Activate the virtual environment
 source venv/bin/activate
 
-# Run an example program
+# Run the programs
 python simple_example_00.py
 python simple_example_01.py
-python simple_example_05.py
-# etc.
+python simple_example_02.py
+python simple_example_03.py
+python simple_example_04.py
+
 ```
 
 ### Activating the Virtual Environment (For Future Sessions)
@@ -78,14 +80,12 @@ pytorch-demo/
 
 ## Example Programs
 
-- **simple_example_00.py** - Basic PyTorch fundamentals
-- **simple_example_01.py** - PyTorch workflow example
-- **simple_example_02.py** - Classification example
-- **simple_example_03.py** - Computer vision example
-- **simple_example_04.py** - Custom datasets example
-- **simple_example_05.py** - Image classification with TinyVGG architecture
-- **moons_classification_02.py** - Classification on synthetic moons dataset
-- **clothing-900-parameters-03.py** - Clothing classification model
+- **simple_example_00.py**  
+- **simple_example_01.py** 
+- **simple_example_02.py** 
+- **simple_example_03.py** 
+- **simple_example_04.py** 
+- **clothing-900-parameters-03.py** - Clothing classification model 
 
 ## Dependencies
 
