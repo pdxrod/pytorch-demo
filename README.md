@@ -73,7 +73,6 @@ pytorch-demo/
 ├── imports.py            # Common imports module
 ├── my_utils.py           # Utility functions for training and data handling
 ├── simple_example_*.py   # Example programs demonstrating PyTorch concepts
-├── moons_classification_02.py  # Moons dataset classification example
 ├── clothing-900-parameters-03.py  # Clothing classification with 900 parameters
 └── data/                 # Training data (FashionMNIST, pizza/steak/sushi images)
 ```
