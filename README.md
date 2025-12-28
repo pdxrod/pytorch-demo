@@ -40,13 +40,11 @@ After setup, activate the virtual environment and run any of the example program
 # Activate the virtual environment
 source venv/bin/activate
 
-# Run the programs
+# Run an example program
 python simple_example_00.py
 python simple_example_01.py
-python simple_example_02.py
-python simple_example_03.py
-python simple_example_04.py
-
+python simple_example_05.py
+# etc.
 ```
 
 ### Activating the Virtual Environment (For Future Sessions)
@@ -73,18 +71,21 @@ pytorch-demo/
 ├── imports.py            # Common imports module
 ├── my_utils.py           # Utility functions for training and data handling
 ├── simple_example_*.py   # Example programs demonstrating PyTorch concepts
+├── moons_classification_02.py  # Moons dataset classification example
 ├── clothing-900-parameters-03.py  # Clothing classification with 900 parameters
 └── data/                 # Training data (FashionMNIST, pizza/steak/sushi images)
 ```
 
 ## Example Programs
 
-- **simple_example_00.py**  
-- **simple_example_01.py** 
-- **simple_example_02.py** 
-- **simple_example_03.py** 
-- **simple_example_04.py** 
-- **clothing-900-parameters-03.py** - Clothing classification model 
+- **simple_example_00.py** - Basic PyTorch fundamentals
+- **simple_example_01.py** - PyTorch workflow example
+- **simple_example_02.py** - Classification example
+- **simple_example_03.py** - Computer vision example
+- **simple_example_04.py** - Custom datasets example
+- **simple_example_05.py** - Image classification with TinyVGG architecture
+- **moons_classification_02.py** - Classification on synthetic moons dataset
+- **clothing-900-parameters-03.py** - Clothing classification model
 
 ## Dependencies
 
