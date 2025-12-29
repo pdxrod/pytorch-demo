@@ -43,7 +43,6 @@ source venv/bin/activate
 # Run an example program
 python simple_example_00.py
 python simple_example_01.py
-python simple_example_05.py
 # etc.
 ```
 
@@ -71,8 +70,6 @@ pytorch-demo/
 ├── imports.py            # Common imports module
 ├── my_utils.py           # Utility functions for training and data handling
 ├── simple_example_*.py   # Example programs demonstrating PyTorch concepts
-├── moons_classification_02.py  # Moons dataset classification example
-├── clothing-900-parameters-03.py  # Clothing classification with 900 parameters
 └── data/                 # Training data (FashionMNIST, pizza/steak/sushi images)
 ```
 
@@ -83,8 +80,6 @@ pytorch-demo/
 - **simple_example_02.py** - Classification example
 - **simple_example_03.py** - Computer vision example
 - **simple_example_04.py** - Custom datasets example
-- **simple_example_05.py** - Image classification with TinyVGG architecture
-- **moons_classification_02.py** - Classification on synthetic moons dataset
 - **clothing-900-parameters-03.py** - Clothing classification model
 
 ## Dependencies
