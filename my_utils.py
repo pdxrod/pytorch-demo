@@ -11,7 +11,7 @@ import sys
 import zipfile
 from pathlib import Path
 import requests
-from typing import List
+from typing import List, Any
 import torchvision
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Dataset
@@ -310,7 +310,9 @@ def ReLU(x):
 def train(model: torch.nn.Module,
           train_dataloader: torch.utils.data.DataLoader,
           loss_fn: torch.nn.Module,
-          optimizer: torch.optim.Optimizer):
+          optimizer: torch.optim.Optimizer,
+          accuracy_fn,
+          device: str = None):
     """
     Trains a PyTorch model for one epoch.
     
@@ -319,26 +321,42 @@ def train(model: torch.nn.Module,
         train_dataloader: DataLoader for training data
         loss_fn: Loss function
         optimizer: Optimizer for updating model parameters
+        accuracy_fn: Function to calculate accuracy
+        device: Device to move tensors to (e.g., 'cuda', 'mps', 'cpu')
     
     Returns:
-        float: Average training loss for the epoch
+        tuple: (train_loss, train_acc) - Average training loss and accuracy for the epoch
     """
-    train_loss = 0
+    train_loss, train_acc = 0, 0
+    model.train()
     for batch, (X, y) in enumerate(train_dataloader):
-        model.train() 
+        # Move data to device if specified
+        if device:
+            X, y = X.to(device), y.to(device)
+        
         y_pred = model(X)
         loss = loss_fn(y_pred, y)
         train_loss += loss 
+        
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        
+        # Calculate accuracy
+        y_pred_class = torch.argmax(torch.softmax(y_pred, dim=1), dim=1)
+        train_acc += accuracy_fn(y_true=y, y_pred=y_pred_class)
+    
     train_loss /= len(train_dataloader)
-    return train_loss
+    train_acc /= len(train_dataloader)
+    # Convert to CPU scalar values for plotting
+    return train_loss.item() if isinstance(train_loss, torch.Tensor) else train_loss, \
+           train_acc.item() if isinstance(train_acc, torch.Tensor) else train_acc
 
 def test(model: torch.nn.Module,
          test_dataloader: torch.utils.data.DataLoader,
          loss_fn: torch.nn.Module,
-         accuracy_fn):
+         accuracy_fn,
+         device: str = None):
     """
     Tests a PyTorch model for one epoch.
     
@@ -347,6 +365,7 @@ def test(model: torch.nn.Module,
         test_dataloader: DataLoader for test data
         loss_fn: Loss function
         accuracy_fn: Function to calculate accuracy
+        device: Device to move tensors to (e.g., 'cuda', 'mps', 'cpu')
     
     Returns:
         tuple: (test_loss, test_acc) - Average test loss and accuracy for the epoch
@@ -355,13 +374,63 @@ def test(model: torch.nn.Module,
     model.eval()
     with torch.inference_mode():
         for X, y in test_dataloader:
+            # Move data to device if specified
+            if device:
+                X, y = X.to(device), y.to(device)
+            
             test_pred = model(X)
             test_loss += loss_fn(test_pred, y) 
             test_acc += accuracy_fn(y_true=y, y_pred=test_pred.argmax(dim=1))
         test_loss /= len(test_dataloader)
         test_acc /= len(test_dataloader)
-    return test_loss, test_acc
+    # Convert to CPU scalar values for plotting
+    return test_loss.item() if isinstance(test_loss, torch.Tensor) else test_loss, \
+           test_acc.item() if isinstance(test_acc, torch.Tensor) else test_acc
 
+def train_loop( model: torch.nn.Module,
+                train_dataloader,
+                test_dataloader,
+                optimizer,
+                loss_fn: torch.nn.Module = nn.CrossEntropyLoss(),
+                accuracy_fn_param = None,
+                epochs: int = 5, 
+                device: Any = None):
+  
+  # Use default accuracy_fn if not provided
+  if accuracy_fn_param is None:
+    accuracy_fn_param = accuracy_fn  # Use the function defined in this module
+  
+  # 2. Create empty results dictionary
+  results = {"train_loss": [],
+             "train_acc": [],
+             "test_loss": [],
+             "test_acc": []}
+  
+  # 3. Loop through training and testing steps for a number of epochs
+  for epoch in range(epochs):
+    train_loss, train_acc = train(model=model,
+                                       train_dataloader=train_dataloader,
+                                       loss_fn=loss_fn,
+                                       optimizer=optimizer,
+                                       accuracy_fn=accuracy_fn_param,
+                                       device=device)
+    test_loss, test_acc = test(model=model,
+                                    test_dataloader=test_dataloader,
+                                    loss_fn=loss_fn,
+                                    accuracy_fn=accuracy_fn_param,
+                                    device=device)
+    
+    # 4. Print out what's happening
+    print(f"Epoch: {epoch} | Train loss: {train_loss:.4f} | Train acc: {train_acc:.4f} | Test loss: {test_loss:.4f} | Test acc: {test_acc:.4f}")
+
+    # 5. Update results dictionary (values are already converted to scalars in train/test functions)
+    results["train_loss"].append(train_loss)
+    results["train_acc"].append(train_acc)
+    results["test_loss"].append(test_loss)
+    results["test_acc"].append(test_acc)
+  
+  # 6. Return the filled results at the end of the epochs
+  return results
 
 def test_train_loop(model: torch.nn.Module,
                     train_dataloader: torch.utils.data.DataLoader,
@@ -436,13 +505,13 @@ def get_pizza_steak_sushi_data():
     image_path = data_path / "pizza_steak_sushi"
     image_path.mkdir(parents=True, exist_ok=True)
   
-    dowloaded = False
+    downloaded = False
     for dirpath, dirnames, filenames in os.walk(data_path):
        if len(filenames) > 1:
-          dowloaded = True
+          downloaded = True
           break
     
-    if not dowloaded:
+    if not downloaded:
         with open(data_path / "pizza_steak_sushi.zip", "wb") as f:
             request = requests.get("https://github.com/mrdbourke/pytorch-deep-learning/raw/main/data/pizza_steak_sushi.zip")
             print("Downloading pizza, steak, sushi data...")

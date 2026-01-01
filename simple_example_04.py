@@ -11,7 +11,7 @@ def intro():
     print("")
     my_utils.pretty_print("""
 This program is intended to summarize the notebook pytorch-deep-learning/ 
-04_pytorch_custom_datasets.ipynb thru.
+04_pytorch_custom_datasets.ipynb thru 07_pytorch_experiment_tracking.ipynb.
 It reads a collection of images of pizza, sushi, and steak, and tries to classify them.
 It recreates class TinyVGG, a small-scale version of a convolutional neural network,
 then saves the model to a file.
