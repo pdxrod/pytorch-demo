@@ -419,13 +419,18 @@ def f(x):
   return 3 * x ** 2 - 4 * x + 1
 
 def numerical_lim(f, x, h):
-  return (f(x + h) - f(x)) / h
-
 # h = 0.1
 # for i in range(5):
 #   print(f'h={h:.5f}, numerical limit={numerical_lim(f, 1, h):.5f}')
 #   h *= 0.1
- 
+  return (f(x + h) - f(x)) / h
+
+def find_classes(directory: str):
+    classes = sorted(entry.name for entry in os.scandir(directory) if entry.is_dir())
+    if not classes:
+        raise FileNotFoundError(f"Couldn't find any classes in {directory}.")
+    return classes 
+
 def get_pizza_steak_sushi_data():
     data_path = Path("data/")
     image_path = data_path / "pizza_steak_sushi"

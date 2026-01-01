@@ -10,8 +10,8 @@ TEST_DIR = IMAGE_PATH / "test"
 def intro():
     print("")
     my_utils.pretty_print("""
-This program is intended to summarize the notebooks from pytorch-deep-learning/ 
-04_pytorch_custom_datasets.ipynb thru 07_pytorch_experiment_tracking.ipynb.
+This program is intended to summarize the notebook pytorch-deep-learning/ 
+04_pytorch_custom_datasets.ipynb thru.
 It reads a collection of images of pizza, sushi, and steak, and tries to classify them.
 It recreates class TinyVGG, a small-scale version of a convolutional neural network,
 then saves the model to a file.
@@ -26,8 +26,8 @@ def find_classes(directory: str) -> Tuple[List[str], Dict[str, int]]:
     classes = sorted(entry.name for entry in os.scandir(directory) if entry.is_dir())
     if not classes:
         raise FileNotFoundError(f"Couldn't find any classes in {directory}.")
-    class_to_idx = {cls_name: i for i, cls_name in enumerate(classes)}
-    return classes, class_to_idx
+#    class_to_idx = {cls_name: i for i, cls_name in enumerate(classes)}
+    return classes #, class_to_idx
 
 class TinyVGG(nn.Module):
   """Creates the TinyVGG architecture.
@@ -183,7 +183,7 @@ def main():
     print("")
 
     my_utils.wait_for_user_input("Display random images from the food dataset")
-    classes, class_to_idx = find_classes(directory=TRAIN_DIR)
+    classes = find_classes(directory=TRAIN_DIR)
     display_random_images(dataset =train_dataloader.dataset,
                           classes =classes,
                           n = 5,
