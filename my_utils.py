@@ -17,6 +17,7 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Dataset
 import textwrap
 import shutil
+import torch.nn.functional as F
 
 # Walk through an image classification directory and find out how many files (images)
 # are in each subdirectory.
@@ -421,7 +422,7 @@ def train_loop( model: torch.nn.Module,
                                     device=device)
     
     # 4. Print out what's happening
-    print(f"Epoch: {epoch} | Train loss: {train_loss:.4f} | Train acc: {train_acc:.4f} | Test loss: {test_loss:.4f} | Test acc: {test_acc:.4f}")
+    print(f"Epoch: {epoch+1} | Train loss: {train_loss:.4f} | Train acc: {train_acc:.4f} | Test loss: {test_loss:.4f} | Test acc: {test_acc:.4f}")
 
     # 5. Update results dictionary (values are already converted to scalars in train/test functions)
     results["train_loss"].append(train_loss)
