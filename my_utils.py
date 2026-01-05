@@ -409,19 +409,18 @@ def train_loop( model: torch.nn.Module,
   
   # 3. Loop through training and testing steps for a number of epochs
   for epoch in range(epochs):
-    train_loss, train_acc = train(model=model,
-                                       train_dataloader=train_dataloader,
-                                       loss_fn=loss_fn,
-                                       optimizer=optimizer,
-                                       accuracy_fn=accuracy_fn_param,
-                                       device=device)
-    test_loss, test_acc = test(model=model,
-                                    test_dataloader=test_dataloader,
-                                    loss_fn=loss_fn,
-                                    accuracy_fn=accuracy_fn_param,
-                                    device=device)
+    train_loss, train_acc = train( model=model,
+                                   train_dataloader=train_dataloader,
+                                   loss_fn=loss_fn,
+                                   optimizer=optimizer,
+                                   accuracy_fn=accuracy_fn_param,
+                                   device=device )
+    test_loss, test_acc = test(  model=model,
+                                 test_dataloader=test_dataloader,
+                                 loss_fn=loss_fn,
+                                 accuracy_fn=accuracy_fn_param,
+                                 device=device )
     
-    # 4. Print out what's happening
     print(f"Epoch: {epoch+1} | Train loss: {train_loss:.4f} | Train acc: {train_acc:.4f} | Test loss: {test_loss:.4f} | Test acc: {test_acc:.4f}")
 
     # 5. Update results dictionary (values are already converted to scalars in train/test functions)
@@ -455,12 +454,15 @@ def test_train_loop(model: torch.nn.Module,
     Returns:
         dict: Dictionary containing final training loss, test loss, and test accuracy
     """
+    device = get_device()
+    # Move model to device
+    model.to(device)
     counter = epochs / 5 * 3
     spinner = itertools.cycle(['|', '/', '-', '\\'])
 
     for epoch in range(epochs):
-        train_loss = train(model, train_dataloader, loss_fn, optimizer)
-        test_loss, test_acc = test(model, test_dataloader, loss_fn, accuracy_fn)
+        train_loss, train_acc = train(model, train_dataloader, loss_fn, optimizer, accuracy_fn, device)
+        test_loss, test_acc = test(model, test_dataloader, loss_fn, accuracy_fn, device)
         
         if( (epoch > 2 and epoch < 10) or (epoch % counter == 0) ):
             # line = next(spinner) + "." * epoch
@@ -472,9 +474,10 @@ def test_train_loop(model: torch.nn.Module,
     sys.stdout.write('\r' + ' ' * 30 + '\r') 
     sys.stdout.flush()
 
+    # Values are already scalars from train/test functions
     return {
-        "train_loss": train_loss.item(),
-        "test_loss": test_loss.item(),
+        "train_loss": train_loss,
+        "test_loss": test_loss,
         "test_acc": test_acc
     }
 

@@ -17,8 +17,13 @@ LEARNING_RATE = 0.001
 def intro():
     print("")
     my_utils.pretty_print("""
-This program is intended to summarize the notebooks pytorch-deep-learning/ 
-04_pytorch_custom_datasets.ipynb thru 09_pytorch_model_deployment.ipyn.
+This program is intended to summarize part of the notebook pytorch-deep-learning/ 
+04_pytorch_custom_datasets.ipynb.
+
+It creates two models, one trained on simple data and one trained on data augmented with TrivialAugmentWide.
+It then compares the performance of the two models. Augmenting the data, even in the simple way done here,
+reduces the loss. 
+
     """)
     print("")
 

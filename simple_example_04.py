@@ -10,8 +10,8 @@ TEST_DIR = IMAGE_PATH / "test"
 def intro():
     print("")
     my_utils.pretty_print("""
-This program is intended to summarize the notebook pytorch-deep-learning/ 
-04_pytorch_custom_datasets.ipynb thru 07_pytorch_experiment_tracking.ipynb.
+This program is intended to summarize part of thenotebook pytorch-deep-learning/ 
+04_pytorch_custom_datasets.ipynb.
 It reads a collection of images of pizza, sushi, and steak, and tries to classify them.
 It recreates class TinyVGG, a small-scale version of a convolutional neural network,
 then saves the model to a file.
@@ -109,13 +109,11 @@ def display_random_images(dataset: torch.utils.data.Dataset,
 
   random_samples_idx = random.sample(range( l ), k=k)
 
-  # Calculate grid dimensions for better layout
-  cols = min(5, k)  # Max 5 columns
-  rows = (k + cols - 1) // cols  # Calculate rows needed
+  cols = min(5, k)  
+  rows = (k + cols - 1) // cols  
   
   fig, axes = plt.subplots(rows, cols, figsize=(15, 3*rows))
   
-  # Ensure axes is always a 2D array for consistent indexing
   if rows == 1 and cols == 1:
     axes = np.array([[axes]])
   elif rows == 1:
@@ -142,7 +140,6 @@ def display_random_images(dataset: torch.utils.data.Dataset,
         title = title + f"\nshape: {targ_image_adjust.shape}"
       ax.set_title(title)
   
-  # Hide any unused subplots
   for i in range(k, rows * cols):
     row = i // cols
     col = i % cols
@@ -178,7 +175,7 @@ def main():
                               accuracy_fn=accuracy_fn, 
                               epochs=10 )
     print("")
-    my_utils.wait_for_user_input("Save the model to a file...")
+    my_utils.wait_for_user_input( "Save the model to file simple_example_04.pth...")
     save_model(model=model, target_dir="models", model_name="simple_example_04.pth")
     print("")
 
