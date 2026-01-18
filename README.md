@@ -11,8 +11,73 @@ This project takes lessons from the PyTorch Deep Learning course and creates sim
 - **Neural network architecture**
 - **Training with backpropagation**
 - **Model evaluation and testing**
+- **Large Language Model (LLM) basics**
 
 These programs are highly simplified versions of what powers large language models (LLMs) like ChatGPT. While real LLMs use millions of parameters and train on vast datasets, these examples use simple data and minimal neural network layers to illustrate the same fundamental principles: generating data, training models through backpropagation, and optimizing until the model answers questions correctly.
+
+## Project Files
+
+### Setup Scripts
+
+- **`setup.sh`** - One-time setup script that creates a virtual environment (`venv/`) and installs all required packages from `requirements.txt`. Checks for Python 3, creates the venv if needed, and verifies the installation. Safe to run multiple times.
+
+- **`activate.sh`** - Helper script to activate the virtual environment. Simply run `source activate.sh` instead of typing `source venv/bin/activate`.
+
+- **`sync_packages.sh`** - Syncs packages from `venv/` to `.venv/` so notebooks and scripts use the same packages. Useful when working with both Jupyter notebooks and Python scripts.
+
+### Minimal LLM Examples
+
+Introduction to creating Large Language Models from scratch:
+
+- **`minimal_llm_0.py`** - Basic transformer architecture with character-level tokenization
+- **`minimal_llm_1.py`** - Expanded transformer with training loop
+- **`minimal_llm_2.py`** - Complete minimal LLM with text generation capabilities
+
+These demonstrate the core transformer architecture (attention mechanisms, embeddings, language model head) in minimal code.
+
+### PyTorch ML Examples
+
+Simplified PyTorch programs based on [pytorch-deep-learning](https://github.com/mrdbourke/pytorch-deep-learning):
+
+- **`simple_pytorch_example_00.py`** - Basic PyTorch fundamentals
+- **`simple_pytorch_example_01.py`** - PyTorch workflow example
+- **`simple_pytorch_example_02.py`** - Classification example with moons dataset
+- **`simple_pytorch_example_03.py`** - Computer vision example using FashionMNIST (clothing classification with grainy 28x28 images)
+- **`simple_pytorch_example_04.py`** - Custom datasets example with pizza/steak/sushi image classification
+- **`simple_pytorch_example_05.py`** - Data augmentation and model training
+- **`simple_pytorch_example_06.py`** - Additional PyTorch example
+
+Each program includes detailed descriptions printed at the beginning explaining what it demonstrates.
+
+### Full-Featured Example
+
+- **`clothing-900-parameters-03-slow.py`** - Full version of `simple_pytorch_example_03.py`, based on `pytorch-deep-learning/03_pytorch_computer_vision.ipynb`. Classifies clothing using the FashionMNIST dataset (70,000 grainy 28x28 images of 10 clothing categories). This version trains for 900 epochs and requires significant computational resources - a Mac M4 Mini Pro or better is recommended. Runs very slowly on less powerful machines.
+
+### Utility Modules
+
+- **`imports.py`** - Centralized import module containing all imports required by the `simple_pytorch_example_*.py` programs. This includes PyTorch, torchvision, NumPy, Matplotlib, scikit-learn, PIL, and other dependencies. All example programs use `from imports import *` to ensure consistent imports across the project.
+
+- **`my_utils.py`** - Utility functions used across the examples, including:
+  - Training and testing loops (`train_loop`, `test_train_loop`)
+  - DataLoader creation (`create_dataloaders`)
+  - Accuracy calculation (`accuracy_fn`)
+  - Model visualization and plotting utilities
+  - Data download helpers
+  - Device detection (CPU/CUDA/MPS)
+  
+  This module is imported by all example programs to avoid code duplication.
+
+### Dependencies
+
+- **`requirements.txt`** - Specifies exact versions of all Python packages needed. Includes:
+  - **PyTorch ecosystem** (torch, torchvision, torchaudio) - Core deep learning framework
+  - **Data science** (numpy, pandas, scikit-learn) - Numerical computing and ML utilities
+  - **Visualization** (matplotlib, matplotlib-inline) - Plotting and graphs
+  - **Image processing** (Pillow) - Image loading and manipulation
+  - **Jupyter support** (ipykernel) - Notebook compatibility
+  - **Utilities** (requests, tqdm, torchinfo) - Network requests, progress bars, model inspection
+
+  Version numbers are pinned for reproducibility. All packages are installed automatically by `setup.sh`.
 
 ## Quick Start
 
@@ -41,8 +106,8 @@ After setup, activate the virtual environment and run any of the example program
 source venv/bin/activate
 
 # Run an example program
-python simple_example_00.py
-python simple_example_01.py
+python simple_pytorch_example_00.py
+python minimal_llm_0.py
 # etc.
 ```
 
@@ -64,23 +129,30 @@ source activate.sh
 
 ```
 pytorch-demo/
-├── setup.sh              # One-time setup script (creates venv, installs packages)
-├── activate.sh           # Helper script to activate virtual environment
-├── requirements.txt      # Python package dependencies
-├── imports.py            # Common imports module
-├── my_utils.py           # Utility functions for training and data handling
-├── simple_example_*.py   # Example programs demonstrating PyTorch concepts
-└── data/                 # Training data (FashionMNIST, pizza/steak/sushi images)
+├── setup.sh                           # One-time setup script (creates venv, installs packages)
+├── activate.sh                        # Helper script to activate virtual environment
+├── sync_packages.sh                   # Sync packages between venv and .venv
+├── requirements.txt                   # Python package dependencies with pinned versions
+├── imports.py                         # Centralized imports module for all example programs
+├── my_utils.py                        # Utility functions for training and data handling
+├── minimal_llm_*.py                   # Introduction to LLM creation (3 examples)
+├── simple_pytorch_example_0*.py       # PyTorch ML examples based on pytorch-deep-learning
+├── clothing-900-parameters-03-slow.py # Full clothing classification (requires M4 Mini Pro+)
+└── data/                              # Training data (FashionMNIST, pizza/steak/sushi images)
 ```
 
-## Example Programs
+## Example Programs Summary
 
-- **simple_example_00.py** - Basic PyTorch fundamentals
-- **simple_example_01.py** - PyTorch workflow example
-- **simple_example_02.py** - Classification example
-- **simple_example_03.py** - Computer vision example
-- **simple_example_04.py** - Custom datasets example
-- **clothing-900-parameters-03.py** - Clothing classification model
+See the "Project Files" section above for detailed descriptions. Quick reference:
+
+**Minimal LLM Examples:**
+- `minimal_llm_0.py`, `minimal_llm_1.py`, `minimal_llm_2.py` - Progressive introduction to transformer-based language models
+
+**PyTorch ML Examples:**
+- `simple_pytorch_example_00.py` through `simple_pytorch_example_06.py` - PyTorch deep learning fundamentals
+
+**Full Example:**
+- `clothing-900-parameters-03-slow.py` - Complete FashionMNIST clothing classification (computationally intensive)
 
 ## Dependencies
 
