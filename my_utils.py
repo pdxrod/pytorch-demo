@@ -165,6 +165,7 @@ def pred_and_plot_image(
     model: torch.nn.Module,
     image_path: str,
     class_names: List[str] = None,
+    image_size: tuple = (224, 224),
     transform=None,
     device: torch.device = "cuda" if torch.cuda.is_available() else "cpu",
 ):
@@ -174,52 +175,37 @@ def pred_and_plot_image(
         model (torch.nn.Module): trained PyTorch image classification model.
         image_path (str): filepath to target image.
         class_names (List[str], optional): different class names for target image. Defaults to None.
-        transform (_type_, optional): transform of target image. Defaults to None.
+        image_size (tuple, optional): size to resize image to. Defaults to (224, 224).
+        transform (_type_, optional): transform of target image. Defaults to None (uses ImageNet normalization).
         device (torch.device, optional): target device to compute on. Defaults to "cuda" if torch.cuda.is_available() else "cpu".
     
     Returns:
         Matplotlib plot of target image and model prediction as title.
-
-    Example usage:
-        pred_and_plot_image(model=model,
-                            image="some_image.jpeg",
-                            class_names=["class_1", "class_2", "class_3"],
-                            transform=torchvision.transforms.ToTensor(),
-                            device=device)
     """
+    from PIL import Image
 
-    # 1. Load in image and convert the tensor values to float32
-    target_image = torchvision.io.read_image(str(image_path)).type(torch.float32)
+    img = Image.open(image_path)
 
-    # 2. Divide the image pixel values by 255 to get them between [0, 1]
-    target_image = target_image / 255.0
+    if transform is not None:
+        image_transform = transform
+    else:
+        image_transform = transforms.Compose([
+            transforms.Resize(image_size),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
 
-    # 3. Transform if necessary
-    if transform:
-        target_image = transform(target_image)
-
-    # 4. Make sure the model is on the target device
     model.to(device)
-
-    # 5. Turn on model evaluation mode and inference mode
     model.eval()
     with torch.inference_mode():
-        # Add an extra dimension to the image
-        target_image = target_image.unsqueeze(dim=0)
+        transformed_image = image_transform(img).unsqueeze(dim=0)
+        target_image_pred = model(transformed_image.to(device))
 
-        # Make a prediction on image with an extra dimension and send it to the target device
-        target_image_pred = model(target_image.to(device))
-
-    # 6. Convert logits -> prediction probabilities (using torch.softmax() for multi-class classification)
     target_image_pred_probs = torch.softmax(target_image_pred, dim=1)
-
-    # 7. Convert prediction probabilities -> prediction labels
     target_image_pred_label = torch.argmax(target_image_pred_probs, dim=1)
 
-    # 8. Plot the image alongside the prediction and prediction probability
-    plt.imshow(
-        target_image.squeeze().permute(1, 2, 0)
-    )  # make sure it's the right size for matplotlib
+    plt.figure()
+    plt.imshow(img)
     if class_names:
         title = f"Pred: {class_names[target_image_pred_label.cpu()]} | Prob: {target_image_pred_probs.max().cpu():.3f}"
     else:
