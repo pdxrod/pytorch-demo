@@ -73,7 +73,6 @@ def plot_decision_boundary(model: torch.nn.Module, X: torch.Tensor, y: torch.Ten
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
 
-
 # Plot linear data or training and test and predictions (optional)
 def plot_predictions(
     train_data, train_labels, test_data, test_labels, predictions=None
@@ -96,7 +95,6 @@ def plot_predictions(
     # Show the legend
     plt.legend(prop={"size": 14})
 
-
 # Calculate accuracy (a classification metric)
 def accuracy_fn(y_true, y_pred):
     """Calculates accuracy between truth labels and predictions.
@@ -111,7 +109,6 @@ def accuracy_fn(y_true, y_pred):
     correct = torch.eq(y_true, y_pred).sum().item()
     acc = (correct / len(y_pred)) * 100
     return acc
-
 
 def print_train_time(start, end, device=None):
     """Prints difference between start and end time.
@@ -128,7 +125,6 @@ def print_train_time(start, end, device=None):
     print(f"\nTrain time on {device}: {total_time:.3f} seconds")
     return total_time
 
-# Plot loss curves of a model
 def plot_loss_curves(results):
     """Plots training curves of a results dictionary.
 
@@ -232,15 +228,11 @@ def pred_and_plot_image(
     plt.axis(False)
 
 def set_seeds(seed: int=42):
-    """Sets random sets for torch operations.
-
-    Args:
-        seed (int, optional): Random seed to set. Defaults to 42.
-    """
-    # Set the seed for general torch operations
     torch.manual_seed(seed)
-    # Set the seed for CUDA torch operations (ones that happen on the GPU)
-    torch.cuda.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+    if torch.backends.mps.is_available():
+        torch.mps.manual_seed(seed)
 
 def download_data(source: str, 
                   destination: str,
