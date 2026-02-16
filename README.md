@@ -30,8 +30,7 @@ These programs are highly simplified versions of what powers large language mode
 Introduction to creating Large Language Models from scratch:
 
 - **`minimal_llm_0.py`** - Basic transformer architecture with character-level tokenization
-- **`minimal_llm_1.py`** - Expanded transformer with training loop
-- **`minimal_llm_2.py`** - Complete minimal LLM with text generation capabilities
+- **`minimal_llm_1.py`** - Expanded transformer with training loop, using model sshleifer/tiny-gpt2
 
 These demonstrate the core transformer architecture (attention mechanisms, embeddings, language model head) in minimal code.
 
@@ -39,15 +38,15 @@ These demonstrate the core transformer architecture (attention mechanisms, embed
 
 Simplified PyTorch programs based on [pytorch-deep-learning](https://github.com/mrdbourke/pytorch-deep-learning):
 
-- **`simple_pytorch_example_00.py`** - Basic PyTorch fundamentals
-- **`simple_pytorch_example_01.py`** - PyTorch workflow example
-- **`simple_pytorch_example_02.py`** - Classification example with moons dataset
-- **`simple_pytorch_example_03.py`** - Computer vision example using FashionMNIST (clothing classification with grainy 28x28 images)
-- **`simple_pytorch_example_04.py`** - Custom datasets example with pizza/steak/sushi image classification
-- **`simple_pytorch_example_05.py`** - Data augmentation and model training
-- **`simple_pytorch_example_06.py`** - Additional PyTorch example
+- **`simple_pytorch_example_0.py`** - Basic PyTorch fundamentals
+- **`simple_pytorch_example_1.py`** - PyTorch workflow example
+- **`simple_pytorch_example_2.py`** - Classification example - a drawing of curved lines, showing an AI/ML program attempting to find a way between them 
+- **`simple_pytorch_example_3.py`** - Computer vision example using FashionMNIST (clothing classification with grainy 28x28 images)
+- **`simple_pytorch_example_4.py`** - Custom datasets example with pizza/steak/sushi image classification
+- **`simple_pytorch_example_5.py`** - Data augmentation and model training
+- **`simple_pytorch_example_6.py`** - Additional PyTorch example, implementing Improving Language Models by Padding Tokens with Pretrained Encoders by He et al. 2019.
 
-Each program includes detailed descriptions printed at the beginning explaining what it demonstrates.
+Each program outputs detailed descriptions at the beginning explaining what it demonstrates.
 
 ### Full-Featured Example
 
@@ -64,12 +63,12 @@ Each program includes detailed descriptions printed at the beginning explaining 
   - Model visualization and plotting utilities
   - Data download helpers
   - Device detection (CPU/CUDA/MPS)
-  
-  This module is imported by all example programs to avoid code duplication.
 
 ### Dependencies
 
-- **`requirements.txt`** - Specifies exact versions of all Python packages needed. Includes:
+- **`pip install -r requirements.txt`** - Specifies exact versions of all Python packages needed. 
+
+ Includes:
   - **PyTorch ecosystem** (torch, torchvision, torchaudio) - Core deep learning framework
   - **Data science** (numpy, pandas, scikit-learn) - Numerical computing and ML utilities
   - **Visualization** (matplotlib, matplotlib-inline) - Plotting and graphs
@@ -106,7 +105,6 @@ After setup, activate the virtual environment and run any of the example program
 source venv/bin/activate
 
 # Run an example program
-python simple_pytorch_example_00.py
 python minimal_llm_0.py
 # etc.
 ```
@@ -114,12 +112,6 @@ python minimal_llm_0.py
 ### Activating the Virtual Environment (For Future Sessions)
 
 You only need to run `./setup.sh` once (or when you need to reinstall packages). For future terminal sessions, just activate the virtual environment:
-
-```bash
-source venv/bin/activate
-```
-
-Or use the activation script:
 
 ```bash
 source activate.sh
@@ -146,10 +138,10 @@ pytorch-demo/
 See the "Project Files" section above for detailed descriptions. Quick reference:
 
 **Minimal LLM Examples:**
-- `minimal_llm_0.py`, `minimal_llm_1.py`, `minimal_llm_2.py` - Progressive introduction to transformer-based language models
+- `minimal_llm_0.py`, `minimal_llm_1.py` - Progressive introduction to transformer-based language models
 
 **PyTorch ML Examples:**
-- `simple_pytorch_example_00.py` through `simple_pytorch_example_06.py` - PyTorch deep learning fundamentals
+- `simple_pytorch_example_00.py` thru `simple_pytorch_example_06.py` - PyTorch deep learning fundamentals
 
 **Full Example:**
 - `clothing-900-parameters-03-slow.py` - Complete FashionMNIST clothing classification (computationally intensive)
@@ -208,8 +200,15 @@ Or simply run `./setup.sh` again (it's safe to run multiple times).
 
 If you see errors about multiprocessing when running programs with `num_workers > 0` in DataLoader:
 
-- Make sure your Python scripts use `if __name__ == '__main__':` to protect the main execution code
-- Alternatively, set `num_workers=0` in DataLoader creation (slower but avoids multiprocessing issues)
+- Set `num_workers=0` in DataLoader creation (slower but avoids multiprocessing issues)
+
+### MPS mutex / script hangs (macOS)
+
+On Mac (especially with M-series GPUs), you may see `[mutex.cc : 452] RAW: Lock blocking ...` and the script may hang. This is often due to loading too many heavy libraries (PyTorch, transformers, matplotlib, etc.) at once.
+
+- **Quick fix**: Run with MPS disabled: `PYTORCH_MPS_DISABLE=1 python your_script.py`
+- **Long-term fix**: Use **deferred (just-in-time) imports**: import heavy modules only inside the functions that need them, not at the top of the file. That keeps peak memory lower and can avoid the mutex. See `minimal_llm_1.py` for an example: it only imports `os`, `textwrap`, and `shutil` at the top; `torch` and `transformers` are imported at the start of `main()`, and `matplotlib`/`seaborn` only just before plotting.
+- **Note**: Scripts that do `from imports import *` or `import my_utils` load PyTorch and other heavy libs immediately. If a script only needs helpers like `pretty_print` or `wait_for_user_input`, consider inlining those (using the standard library only) so you can defer importing `my_utils` and thus avoid pulling in torch until you need it.
 
 ### Package Import Errors
 
