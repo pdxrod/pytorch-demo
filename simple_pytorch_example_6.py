@@ -169,8 +169,9 @@ def check():
 def intro():
     print("")
     my_utils.pretty_print( """
-This implements parts 3-11 of the notebook 08_pytorch_paper_replicating.ipynb 
-from pytorch-deep-learning. It replicates the results of the paper 
+This implements parts 3-11 of the notebook 08_pytorch_paper_replicating.ipynb
+from 'https://github.com/mrdbourke/pytorch-deep-learning'.
+It replicates the results of the paper 
 Improving Language Models by Padding Tokens with Pretrained Encoders by He et al. 2019. and
 An Image is Worth 16×16 Words: Transformers for Image Recognition at Scale
 by Dosovitskiy et al., 2020.
@@ -390,8 +391,6 @@ Putting it all together to create ViT
     print("")
 
     my_utils.wait_for_user_input("Get a pretrained ViT model torchvision.models.vit_b_16")
-    cost = 30 * 24 * 8
-    print(f"Cost of renting a TPUv3 for 30 straight days: ${cost}USD")
     pretrained_vit_weights = torchvision.models.ViT_B_16_Weights.DEFAULT 
     pretrained_vit = torchvision.models.vit_b_16(weights=None)
     pretrained_vit.load_state_dict(torch.load("./models/vit_b_16-c867db91.pth", weights_only=True))

@@ -12,13 +12,15 @@ BATCH_SIZE = 32
 
 torch.manual_seed(RANDOM_SEED)
 
-my_utils.pretty_print("""An important example from AI history.
+my_utils.pretty_print("""
+An important example from AI history.
 Grainy pictures of clothing from the Fashion MNIST dataset.
 The Fashion MNIST dataset contains 70,000 images of 10 different categories of clothing.
 Each image is a 28x28 grayscale image.
 The dataset is split into 60,000 training images and 10,000 test images.
 The images are labeled with the category of clothing they represent.
-The dataset is used to train and test a clothing model.
+The dataset is used to train a model to be able to identify a picture of clothing 
+which is in one of the 10 categories, but which it has not seen before. 
 """)
 train_data = datasets.FashionMNIST(
     root="data", 

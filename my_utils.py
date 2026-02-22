@@ -12,7 +12,6 @@ import zipfile
 from pathlib import Path
 import requests
 from typing import List, Any
-import torchvision
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Dataset
 import textwrap
@@ -21,8 +20,6 @@ import torch.nn.functional as F
 
 # Walk through an image classification directory and find out how many files (images)
 # are in each subdirectory.
-import os
-
 def walk_through_dir(dir_path):
     """
     Walks through dir_path returning its contents.
