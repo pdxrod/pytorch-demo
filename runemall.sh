@@ -7,6 +7,10 @@ echo "\nminimal_llm_0.py"
 python minimal_llm_0.py
 echo "\nminimal_llm_1.py"
 python minimal_llm_1.py
+echo "\nminimal_llm_2.py"
+python minimal_llm_2.py
+echo "\nsimple_pytorch_example_0.py"
+python simple_pytorch_example_0.py
 echo "\nsimple_pytorch_example_1.py"
 python simple_pytorch_example_1.py
 echo "\nsimple_pytorch_example_2.py"

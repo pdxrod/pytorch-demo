@@ -30,7 +30,8 @@ These programs are highly simplified versions of what powers large language mode
 Introduction to creating Large Language Models from scratch:
 
 - **`minimal_llm_0.py`** - Basic transformer architecture with character-level tokenization
-- **`minimal_llm_1.py`** - Expanded transformer with training loop, using model sshleifer/tiny-gpt2
+- **`minimal_llm_1.py`** - Attention inspector using sshleifer/tiny-gpt2; uses deferred imports and a helper script (`_minimal_llm_1_load.py`) so it can run on macOS without MPS mutex issues
+- **`minimal_llm_2.py`** - Tiny transformer (character-level) with attention visualization
 
 These demonstrate the core transformer architecture (attention mechanisms, embeddings, language model head) in minimal code.
 
@@ -127,8 +128,9 @@ pytorch-demo/
 ├── requirements.txt                   # Python package dependencies with pinned versions
 ├── imports.py                         # Centralized imports module for all example programs
 ├── my_utils.py                        # Utility functions for training and data handling
-├── minimal_llm_*.py                   # Introduction to LLM creation (3 examples)
-├── simple_pytorch_example_0*.py       # PyTorch ML examples based on pytorch-deep-learning
+├── minimal_llm_*.py                   # Introduction to LLM creation (minimal_llm_0/1/2)
+├── _minimal_llm_1_load.py            # Helper for minimal_llm_1 (loads model in subprocess on non-macOS)
+├── simple_pytorch_example_0.py .. 6  # PyTorch ML examples based on pytorch-deep-learning
 ├── clothing-900-parameters-03-slow.py # Full clothing classification (requires M4 Mini Pro+)
 └── data/                              # Training data (FashionMNIST, pizza/steak/sushi images)
 ```
@@ -138,10 +140,10 @@ pytorch-demo/
 See the "Project Files" section above for detailed descriptions. Quick reference:
 
 **Minimal LLM Examples:**
-- `minimal_llm_0.py`, `minimal_llm_1.py` - Progressive introduction to transformer-based language models
+- `minimal_llm_0.py`, `minimal_llm_1.py`, `minimal_llm_2.py` - Progressive introduction to transformer-based language models and attention inspection
 
 **PyTorch ML Examples:**
-- `simple_pytorch_example_00.py` thru `simple_pytorch_example_06.py` - PyTorch deep learning fundamentals
+- `simple_pytorch_example_0.py` thru `simple_pytorch_example_6.py` - PyTorch deep learning fundamentals
 
 **Full Example:**
 - `clothing-900-parameters-03-slow.py` - Complete FashionMNIST clothing classification (computationally intensive)
