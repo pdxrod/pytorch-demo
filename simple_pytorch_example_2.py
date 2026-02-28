@@ -137,7 +137,6 @@ y_test_float = y_test_gpu_or_mps.float()
 y_test_int = y_test_gpu_or_mps.long()
 
 print("Training loop")
-n = 1
 # 1. Forward pass:     X_train → model → y_logits (predictions)
 # 2. Calculate loss:   Compare y_logits to y_train → loss (how wrong?)
 # 3. Backward pass:    loss.backward() → gradients (which way to adjust?)
@@ -155,7 +154,7 @@ model_factories = [ClassifierModel1, ClassifierModel2]
 
 for model_idx, model in enumerate(models):
     print("")
-    print(f"model_{n}")
+    print(f"model_{model_idx + 1}")
     optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
     snapshots = []
     for epoch in range(EPOCHS):
@@ -185,12 +184,11 @@ for model_idx, model in enumerate(models):
                     "test_loss": float(test_loss.item()),
                     "test_acc": float(test_acc)
                 })
-    print(f"Final for model_{n}: Test loss: {test_loss:.4f} | Test acc: {test_acc:.2f}%")
+    print(f"Final for model_{model_idx + 1}: Test loss: {test_loss:.4f} | Test acc: {test_acc:.2f}%")
     model_snapshots.append({
-        "model_num": n,
+        "model_num": model_idx + 1,
         "snapshots": snapshots
     })
-    n += 1
 
 # Now display both models side by side for comparison
 print("")

@@ -59,7 +59,7 @@ def plot_decision_boundary(model: torch.nn.Module, X: torch.Tensor, y: torch.Ten
 
     # Test for multi-class or binary and adjust logits to prediction labels
     if len(torch.unique(y)) > 2:
-        y_pred = torch.softmax(y_logits, dim=1).argmax(dim=1)  # mutli-class
+        y_pred = torch.softmax(y_logits, dim=1).argmax(dim=1)  # multi-class
     else:
         y_pred = torch.round(torch.sigmoid(y_logits))  # binary
 
@@ -208,7 +208,7 @@ def pred_and_plot_image(
     else:
         title = f"Pred: {target_image_pred_label} | Prob: {target_image_pred_probs.max().cpu():.3f}"
     plt.title(title)
-    plt.axis(False)
+    plt.axis('off')
 
 def set_seeds(seed: int=42):
     torch.manual_seed(seed)
@@ -278,10 +278,10 @@ def get_device():
         return "cpu" 
 
 def sigmoid(x):
-  return 1 / (1 + torch.exp(-x))
+    return 1 / (1 + torch.exp(-x))
 
 def ReLU(x):
-  return torch.maximum(torch.tensor(0), x) 
+    return torch.maximum(torch.tensor(0), x)
 
 def train(model: torch.nn.Module,
           train_dataloader: torch.utils.data.DataLoader,
@@ -363,49 +363,49 @@ def test(model: torch.nn.Module,
     return test_loss.item() if isinstance(test_loss, torch.Tensor) else test_loss, \
            test_acc.item() if isinstance(test_acc, torch.Tensor) else test_acc
 
-def train_loop( model: torch.nn.Module,
-                train_dataloader,
-                test_dataloader,
-                optimizer,
-                loss_fn: torch.nn.Module = nn.CrossEntropyLoss(),
-                accuracy_fn_param = None,
-                epochs: int = 5, 
-                device: Any = None):
-  
-  # Use default accuracy_fn if not provided
-  if accuracy_fn_param is None:
-    accuracy_fn_param = accuracy_fn  # Use the function defined in this module
-  
-  # 2. Create empty results dictionary
-  results = {"train_loss": [],
-             "train_acc": [],
-             "test_loss": [],
-             "test_acc": []}
-  
-  # 3. Loop through training and testing steps for a number of epochs
-  for epoch in range(epochs):
-    train_loss, train_acc = train( model=model,
-                                   train_dataloader=train_dataloader,
-                                   loss_fn=loss_fn,
-                                   optimizer=optimizer,
-                                   accuracy_fn=accuracy_fn_param,
-                                   device=device )
-    test_loss, test_acc = test(  model=model,
-                                 test_dataloader=test_dataloader,
-                                 loss_fn=loss_fn,
-                                 accuracy_fn=accuracy_fn_param,
-                                 device=device )
-    
-    print(f"Epoch: {epoch+1} | Train loss: {train_loss:.4f} | Train acc: {train_acc:.4f} | Test loss: {test_loss:.4f} | Test acc: {test_acc:.4f}")
+def train_loop(model: torch.nn.Module,
+               train_dataloader,
+               test_dataloader,
+               optimizer,
+               loss_fn: torch.nn.Module = nn.CrossEntropyLoss(),
+               accuracy_fn_param=None,
+               epochs: int = 5,
+               device: Any = None):
 
-    # 5. Update results dictionary (values are already converted to scalars in train/test functions)
-    results["train_loss"].append(train_loss)
-    results["train_acc"].append(train_acc)
-    results["test_loss"].append(test_loss)
-    results["test_acc"].append(test_acc)
-  
-  # 6. Return the filled results at the end of the epochs
-  return results
+    # Use default accuracy_fn if not provided
+    if accuracy_fn_param is None:
+        accuracy_fn_param = accuracy_fn  # Use the function defined in this module
+
+    # 2. Create empty results dictionary
+    results = {"train_loss": [],
+               "train_acc": [],
+               "test_loss": [],
+               "test_acc": []}
+
+    # 3. Loop through training and testing steps for a number of epochs
+    for epoch in range(epochs):
+        train_loss, train_acc = train(model=model,
+                                      train_dataloader=train_dataloader,
+                                      loss_fn=loss_fn,
+                                      optimizer=optimizer,
+                                      accuracy_fn=accuracy_fn_param,
+                                      device=device)
+        test_loss, test_acc = test(model=model,
+                                   test_dataloader=test_dataloader,
+                                   loss_fn=loss_fn,
+                                   accuracy_fn=accuracy_fn_param,
+                                   device=device)
+
+        print(f"Epoch: {epoch+1} | Train loss: {train_loss:.4f} | Train acc: {train_acc:.4f} | Test loss: {test_loss:.4f} | Test acc: {test_acc:.4f}")
+
+        # 5. Update results dictionary
+        results["train_loss"].append(train_loss)
+        results["train_acc"].append(train_acc)
+        results["test_loss"].append(test_loss)
+        results["test_acc"].append(test_acc)
+
+    # 6. Return the filled results at the end of the epochs
+    return results
 
 def test_train_loop(model: torch.nn.Module,
                     train_dataloader: torch.utils.data.DataLoader,
@@ -432,7 +432,7 @@ def test_train_loop(model: torch.nn.Module,
     device = get_device()
     # Move model to device
     model.to(device)
-    counter = epochs / 5 * 3
+    counter = max(1, epochs * 3 // 5)
     spinner = itertools.cycle(['|', '/', '-', '\\'])
 
     for epoch in range(epochs):
@@ -463,16 +463,6 @@ def show_image(image, label, block=False):
     if( not block ):
        plt.pause(0.001) 
 
-def f(x):
-  return 3 * x ** 2 - 4 * x + 1
-
-def numerical_lim(f, x, h):
-# h = 0.1
-# for i in range(5):
-#   print(f'h={h:.5f}, numerical limit={numerical_lim(f, 1, h):.5f}')
-#   h *= 0.1
-  return (f(x + h) - f(x)) / h
-
 def find_classes(directory: str):
     classes = sorted(entry.name for entry in os.scandir(directory) if entry.is_dir())
     if not classes:
@@ -502,59 +492,57 @@ def get_pizza_steak_sushi_data():
 NUM_WORKERS = os.cpu_count()
 
 def create_dataloaders(
-  train_dir: str,
-  test_dir: str,
-  transform: transforms.Compose,
-  batch_size: int,
-  num_workers: int=NUM_WORKERS  
+    train_dir: str,
+    test_dir: str,
+    transform: transforms.Compose,
+    batch_size: int,
+    num_workers: int = NUM_WORKERS
 ):
-  """Creates training and testing DataLoaders.
+    """Creates training and testing DataLoaders.
 
-  Takes in a training directory and testing directroy path and turns them into 
-  PyTorch Datasets and then into PyTorch DataLoaders.
+    Takes in a training directory and testing directory path and turns them into
+    PyTorch Datasets and then into PyTorch DataLoaders.
 
-  Args:
-    train_dir: Path to training directory.
-    test_dir: Path to testing directory.
-    transform: torchvision transforms to perform on training and testing data.
-    batch_size: Number of samples per batch in each of the DataLoaders.
-    num_workers: An integer for number of workers per DataLoader.
+    Args:
+        train_dir: Path to training directory.
+        test_dir: Path to testing directory.
+        transform: torchvision transforms to perform on training and testing data.
+        batch_size: Number of samples per batch in each of the DataLoaders.
+        num_workers: An integer for number of workers per DataLoader.
 
-  Returns:
-    A tuple of (train_dataloader, test_dataloader, class_names).
-    Where class_names is a list of the target classes.
-    Example usage:
-      train_dataloader, test_dataloader, class_names = create_dataloaders(train_dir=path/to/train_dir,
-        test_dir=path/to/test_dir,
-        transform=some_transform,
-        batch_size=32,
-        num_workers=4)
-  """
-  # Use ImageFolder to create datasets(s)
-  train_data = datasets.ImageFolder(train_dir, transform=transform)
-  test_data = datasets.ImageFolder(test_dir, transform=transform)
+    Returns:
+        A tuple of (train_dataloader, test_dataloader, class_names).
+        Where class_names is a list of the target classes.
+        Example usage:
+            train_dataloader, test_dataloader, class_names = create_dataloaders(
+                train_dir=path/to/train_dir,
+                test_dir=path/to/test_dir,
+                transform=some_transform,
+                batch_size=32,
+                num_workers=4)
+    """
+    train_data = datasets.ImageFolder(train_dir, transform=transform)
+    test_data = datasets.ImageFolder(test_dir, transform=transform)
 
-  # Get class names
-  class_names = train_data.classes
+    class_names = train_data.classes
 
-  # Turn images into DataLoaders
-  train_dataloader = DataLoader(
-      train_data,
-      batch_size=batch_size,
-      shuffle=True,
-      num_workers=num_workers,
-      pin_memory=True # for more on pin memory, see the PyTorch docs: https://pytorch.org/docs/stable/data.html 
-  )
+    train_dataloader = DataLoader(
+        train_data,
+        batch_size=batch_size,
+        shuffle=True,
+        num_workers=num_workers,
+        pin_memory=True
+    )
 
-  test_dataloader = DataLoader(
-      test_data,
-      batch_size=batch_size,
-      shuffle=False,
-      num_workers=num_workers,
-      pin_memory=True
-  )
+    test_dataloader = DataLoader(
+        test_data,
+        batch_size=batch_size,
+        shuffle=False,
+        num_workers=num_workers,
+        pin_memory=True
+    )
 
-  return train_dataloader, test_dataloader, class_names
+    return train_dataloader, test_dataloader, class_names
 
 def pretty_print( txt: str ):
     columns, lines = shutil.get_terminal_size()

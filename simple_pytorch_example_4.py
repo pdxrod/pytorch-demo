@@ -76,7 +76,6 @@ class TinyVGG(nn.Module):
       x = self.conv_block_2(x)
       x = self.classifier(x)
       return x
-from pathlib import Path
 
 def save_model(model: torch.nn.Module,
                target_dir: str,

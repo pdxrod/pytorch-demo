@@ -47,22 +47,22 @@ def train_step(model: torch.nn.Module, use_extra_functions: bool,
     train_loss_values = []
     test_loss_values = []
     for epoch in range(epochs):
-        model_0.train()
-        y_pred = model_0(X_train)
-        test_pred = model_0(X_test)
+        model.train()
+        y_pred = model(X_train)
+        test_pred = model(X_test)
         loss = loss_fn(y_pred, y_train)
         if( use_extra_functions ):
           optimizer.zero_grad()
           loss.backward()
           optimizer.step()
 
-        test_loss = loss_fn(test_pred, y_test.type(torch.float)) 
+        test_loss = loss_fn(test_pred, y_test.type(torch.float))
         train_loss_values.append(loss.detach().numpy())
         test_loss_values.append(test_loss.detach().numpy())
 
-        model_0.eval()
+        model.eval()
         with torch.inference_mode():
-            y_preds_new = model_0(X_test)
+            y_preds_new = model(X_test)
             test_loss = loss_fn(y_preds_new, y_test.type(torch.float))
             if( epoch > 0 and epoch % 50 == 0 ):
                 print(f"Epoch: {epoch} | Test Loss: {test_loss}")

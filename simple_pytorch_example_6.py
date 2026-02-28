@@ -35,10 +35,10 @@ class PatchEmbedding(nn.Module):
 
 class MultiHeadSelfAttentionBlock(nn.Module): 
   """MultiHeadSelfAttentionBlock creates a multi-head self-attention block ("MSA block" for short). """ 
-  def __init__(self, 
-               embedding_dim:int=768, 
-               num_heads:int=12, 
-               attn_dropout:int=0):
+  def __init__(self,
+               embedding_dim:int=768,
+               num_heads:int=12,
+               attn_dropout:float=0):
     super().__init__()
     
     self.layer_norm = nn.LayerNorm(normalized_shape=embedding_dim)
@@ -60,7 +60,7 @@ class MLPBlock(nn.Module):
   def __init__(self,
                embedding_dim:int=768,
                mlp_size:int=3072,
-               dropout:int=0.1):
+               dropout:float=0.1):
     super().__init__()
     
     self.layer_norm = nn.LayerNorm(normalized_shape=embedding_dim)
@@ -85,8 +85,8 @@ class TransformerEncoderBlock(nn.Module):
                embedding_dim:int=768,
                num_heads:int=12,
                mlp_size:int=3072,
-               mlp_dropout:int=0.1,
-               attn_dropout:int=0):
+               mlp_dropout:float=0.1,
+               attn_dropout:float=0):
     super().__init__()
 
     self.msa_block = MultiHeadSelfAttentionBlock(embedding_dim=embedding_dim,
@@ -111,9 +111,9 @@ class ViT(nn.Module):
                embedding_dim:int=768,
                mlp_size:int=3072,
                num_heads:int=12,
-               attn_dropout:int=0,
-               mlp_dropout:int=0.1,
-               embedding_dropout:int=0.1,
+               attn_dropout:float=0,
+               mlp_dropout:float=0.1,
+               embedding_dropout:float=0.1,
                num_classes:int=1000):
     super().__init__()
     assert img_size % patch_size == 0,  f"Image size must be divisible by patch size, image: {img_size}, patch size: {patch_size}"
@@ -150,11 +150,13 @@ def check():
     try:
         import torch
         import torchvision
-        assert int(torch.__version__.split(".")[1]) >= 12, "torch version should be 1.12+"
-        assert int(torchvision.__version__.split(".")[1]) >= 13, "torchvision version should be 0.13+"
+        torch_parts = [int(x) for x in torch.__version__.split(".")[:2]]
+        assert (torch_parts[0] >= 2) or (torch_parts[0] == 1 and torch_parts[1] >= 12), "torch version should be 1.12+"
+        tv_parts = [int(x) for x in torchvision.__version__.split(".")[:2]]
+        assert (tv_parts[0] >= 1) or (tv_parts[0] == 0 and tv_parts[1] >= 13), "torchvision version should be 0.13+"
         print(f"torch version: {torch.__version__}")
         print(f"torchvision version: {torchvision.__version__}")
-    except:
+    except Exception:
         print(f"[INFO] torch/torchvision versions not as required, installing nightly versions.")
         subprocess.check_call([
             "pip3", "install", "-U", "--pre",
@@ -202,7 +204,7 @@ def main():
     print(f"Image shape: {image.shape}; label: {label}")
     plt.imshow(image.permute(1, 2, 0))
     plt.title(class_names[label])
-    plt.axis(False)
+    plt.axis('off')
     height = 224
     width = 224
     color_channels = 3
@@ -215,7 +217,7 @@ def main():
     print(f"Output shape (single 1D sequence of patches): {embedding_layer_output_shape} -> (number_of_patches, embedding_dimension)")
     plt.imshow(image.permute(1, 2, 0))
     plt.title(class_names[label])
-    plt.axis(False)
+    plt.axis('off')
     print("Pass the image through the convolutional layer")
     patch_size = 16
     conv2d = nn.Conv2d(in_channels=3, 

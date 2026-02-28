@@ -113,11 +113,6 @@ def main():
     device = my_utils.get_device()
     torch.manual_seed(RANDOM_SEED)
     classes = my_utils.find_classes(directory=TRAIN_DIR)
-    train_transform_trivial = transforms.Compose([ transforms.Resize(size=(64, 64)),
-                                                   transforms.TrivialAugmentWide(num_magnitude_bins=31),
-                                                   transforms.ToTensor() ])
-    train_data_augmented = datasets.ImageFolder(root=TRAIN_DIR,
-                                            transform=train_transform_trivial)
 
     train_dataloader_simple, train_dataloader_augmented, test_dataloader_simple = create_dataloaders(
         train_dir=TRAIN_DIR,
@@ -130,7 +125,7 @@ def main():
                        output_shape=len(classes) ).to(device)
     model_1 = TinyVGG(input_shape=3,
                       hidden_units=10,
-                      output_shape=len(train_data_augmented.classes)).to(device)
+                      output_shape=len(classes)).to(device)
     print("model_0:")
     print(model_0)
     print("model_1:")

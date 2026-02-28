@@ -135,15 +135,16 @@ print(f"  Number of samples: {len(train_data)}")
 print(f"  Image dimensions: [channels, height, width] = [1, 28, 28]")
 print(f"  Classes: {train_data.classes}\n")
 
-# Find and display one example of each category
-found_labels = set()
-for i in range( len(train_data) ):
-    break; # Delete this line if you want to see all the pictures of clothing in colour
-    image, label = train_data[i]  
-    if label not in found_labels:
-        class_name = train_data.classes[label]  
-        my_utils.show_image(image, f"Class {label}: {class_name}", block=True)
-        found_labels.add(label)
-        if len(found_labels) == len(train_data.classes):
-            break
+SHOW_INDIVIDUAL_IMAGES = False  # Set to True to display each clothing category image
+
+if SHOW_INDIVIDUAL_IMAGES:
+    found_labels = set()
+    for i in range(len(train_data)):
+        image, label = train_data[i]
+        if label not in found_labels:
+            class_name = train_data.classes[label]
+            my_utils.show_image(image, f"Class {label}: {class_name}", block=True)
+            found_labels.add(label)
+            if len(found_labels) == len(train_data.classes):
+                break
 

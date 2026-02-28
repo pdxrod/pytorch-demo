@@ -20,7 +20,6 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import make_moons
-from torch.utils.data import DataLoader, Dataset
 from torchinfo import summary
 
 import itertools
